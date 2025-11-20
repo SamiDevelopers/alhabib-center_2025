@@ -338,6 +338,12 @@
         };
 
         async function initializeApp() {
+         if (typeof sdk === "undefined") {
+          console.error("SDK is not loaded!");
+          return;
+         }
+         sdk.init();
+
             const result = await window.dataSdk.init(dataHandler);
             if (!result.isOk) {
                 console.error('Failed to initialize Data SDK');
