@@ -3,7 +3,7 @@
  <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>����ظام مركز الحبيب للألحان والدراسات القبطية</title>
+  <title>ظام مركز الحبيب للألحان والدراسات القبطية</title>
   <script src="/_sdk/data_sdk.js"></script>
   <script src="/_sdk/element_sdk.js"></script>
   <script src="https://cdn.tailwindcss.com"></script>
@@ -288,9 +288,9 @@
         
         const defaultConfig = {
             center_name: 'مركز الحبيب للألحان',
-            center_subtitle: 'والدرا��ات القبطية',
-            welcome_message: 'مرحباً بك ف����',
-            footer_text: 'صُنع بحب لخدمة ا��كنيسة',
+            center_subtitle: 'والدراسات القبطية',
+            welcome_message: 'مرحباً بك ف',
+            footer_text: 'مع تحيات مركز الحبيب للألحان والدارسات القبطية',
             background_color: '#2C1810',
             surface_color: '#3D2817',
             text_color: '#F5E6D3',
@@ -311,7 +311,7 @@
         const ADMIN_USERNAME = 'admin';
         const ADMIN_PASSWORD = 'admin123';
 
-        // تواريخ الأسابيع الدراسية (5 س��تمبر - 12 ديسمبر 2024)
+        // تواريخ الأسابيع الدراسية (5 سبتمبر - 12 ديسمبر 2024)
         const SEMESTER_WEEKS = [
             { number: 1, start: '2024-09-05', end: '2024-09-10' },
             { number: 2, start: '2024-09-12', end: '2024-09-17' },
@@ -355,7 +355,7 @@
             const result = await window.dataSdk.init(dataHandler);
             if (!result.isOk) {
                 console.error('Failed to initialize Data SDK');
-                showToast('فشل ��ي تهيئة النظام', 'error');
+                showToast('فشل في تهيئة النظام', 'error');
                 return;
             }
 
@@ -739,7 +739,7 @@
                     localStorage.setItem('currentUser', JSON.stringify(currentUser));
                     renderAdminDashboard();
                 } else {
-                    showToast('اسم المستخدم أو كلمة المرور ����ير صحيحة', 'error');
+                    showToast('اسم المستخدم أو كلمة المرور غير صحيحة', 'error');
                 }
             }
         }
@@ -748,7 +748,7 @@
             currentUser = null;
             localStorage.removeItem('currentUser');
             renderLoginPage();
-            showToast('تم تسجيل الخروج بنج��ح', 'success');
+            showToast('تم تسجيل الخروج بنجاح', 'success');
         }
 
         // =====================================================
@@ -791,7 +791,7 @@
                         
                         <button onclick="showExamResults()" class="dynamic-surface p-6 rounded-xl shadow-lg hover:shadow-xl card-hover border" style="border-color: rgba(205, 127, 50, 0.3);">
                             <div class="text-5xl mb-3">📊</div>
-                            <h3 class="dynamic-text text-xl font-bold">الن��ائج</h3>
+                            <h3 class="dynamic-text text-xl font-bold">النتائج</h3>
                         </button>
                     </div>
 
@@ -898,7 +898,7 @@
                                 <p class="text-2xl font-bold text-green-400">${grade.rites_grade || '-'}/10</p>
                             </div>
                             <div>
-                                <p class="text-sm opacity-75">��لتسميع الأسبوعي</p>
+                                <p class="text-sm opacity-75"> التسميع الأسبوعي للألحان</p>
                                 <p class="text-2xl font-bold text-purple-400">${grade.hymns_grade || '-'}/10</p>
                             </div>
                         </div>
@@ -927,7 +927,7 @@
             modal.className = 'modal-overlay fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50';
             modal.innerHTML = `
                 <div class="modal-content dynamic-surface rounded-2xl shadow-2xl p-6 max-w-lg w-full border-2 border-gray-700">
-                    <h2 class="dynamic-text text-2xl font-bold mb-4">���� ��فع الواجبات</h2>
+                    <h2 class="dynamic-text text-2xl font-bold mb-4">فع الواجبات</h2>
                     <div class="space-y-3">
                         <button onclick="uploadHomeworkByType('coptic')" class="w-full dynamic-primary-btn text-white py-4 px-6 rounded-lg font-bold btn-primary">
                             📚 رفع واجب اللغة القبطية
@@ -983,7 +983,7 @@
                         </div>
                         <div class="flex gap-3">
                             <button type="submit" class="flex-1 dynamic-secondary-btn text-white py-3 px-6 rounded-lg font-bold btn-primary">
-                                📤 رفع الواج��
+                                📤 رفع الواجب
                             </button>
                             <button type="button" onclick="this.closest('.modal-overlay').remove()" class="flex-1 bg-gray-600 text-white py-3 px-6 rounded-lg font-bold btn-primary">
                                 ❌ إلغاء
@@ -1058,14 +1058,14 @@
             }
 
             if (result.isOk) {
-                showToast('تم رفع الواجب بن��اح! ✓', 'success');
+                showToast('تم رفع الواجب بنجاح! ✓', 'success');
                 document.querySelector('.modal-overlay').remove();
                 
                 if (googleConfig.scriptUrl) {
                     syncToGoogle(homeworkData);
                 }
             } else {
-                showToast('فشل في رفع ال��اجب', 'error');
+                showToast('فشل في رفع الواجب', 'error');
                 submitBtn.disabled = false;
                 submitBtn.classList.remove('loading');
                 submitBtn.innerHTML = '📤 رفع الواجب';
@@ -1089,10 +1089,10 @@
                             📝 الميدترم - الترم الثاني
                         </button>
                         <button onclick="showExamResult('final2')" class="w-full dynamic-primary-btn text-white py-4 px-6 rounded-lg font-bold btn-primary">
-                            📗 التر�� الثاني
+                            📗 الترم الثاني
                         </button>
                         <button onclick="this.closest('.modal-overlay').remove()" class="w-full bg-gray-600 text-white py-3 px-6 rounded-lg font-bold btn-primary">
-                            ❌ إغل��ق
+                            ❌ إغلاق
                         </button>
                     </div>
                 </div>
@@ -1107,7 +1107,7 @@
                 midterm1: 'الميدترم - الترم الأول',
                 final1: 'الترم الأول',
                 midterm2: 'الميدترم - الترم الثاني',
-                final2: 'الترم ا��ثاني'
+                final2: 'الترم الثاني'
             };
             
             document.querySelector('.modal-overlay').remove();
@@ -1140,7 +1140,7 @@
                             <p class="text-white text-lg mb-2">المجموع الكلي</p>
                             <p class="text-white text-5xl font-bold">${exam.total_score || 0}</p>
                         </div>
-                    ` : '<p class="text-center opacity-60 py-8">النتيجة غير متاحة ��عد</p>'}
+                    ` : '<p class="text-center opacity-60 py-8">النتيجة غير متاحة بعد</p>'}
                     <button onclick="this.closest('.modal-overlay').remove()" class="mt-6 w-full dynamic-secondary-btn text-white py-3 px-6 rounded-lg font-bold btn-primary">
                         ❌ إغلاق
                     </button>
@@ -1246,7 +1246,7 @@
 
         function showTeacherPersonalInfo() {
             const specialties = [];
-            if (currentUser.coptic_lang) specialties.push('����للغة القبطية');
+            if (currentUser.coptic_lang) specialties.push('اللغة القبطية');
             if (currentUser.church_rites) specialties.push('الطقوس الكنسية');
             if (currentUser.saved_texts) specialties.push('المحفوظات والأجبية');
             if (currentUser.hymns) specialties.push('الألحان والتسبحة');
@@ -1254,8 +1254,8 @@
             
             const teams = [];
             if (currentUser.academic_prep) teams.push('الإعداد الدراسي');
-            if (currentUser.control_team) teams.push('الكن��رول');
-            if (currentUser.communication_team) teams.push('��لاتصالات والمتابعة');
+            if (currentUser.control_team) teams.push('الكنترول');
+            if (currentUser.communication_team) teams.push('الاتصالات والمتابعة');
             if (currentUser.trips_team) teams.push('الرحلات والمؤتمرات');
             if (currentUser.other_admin) teams.push('إدارية أخرى');
             
@@ -1282,7 +1282,7 @@
                             <p class="dynamic-text font-bold">${currentUser.center_class || '-'}</p>
                         </div>
                         <div class="md:col-span-2">
-                            <p class="dynamic-text opacity-75 mb-2">��واد ال��خصص</p>
+                            <p class="dynamic-text opacity-75 mb-2">مواد التخصص</p>
                             <div class="flex flex-wrap gap-2">
                                 ${specialties.map(s => `<span class="px-3 py-1 bg-blue-600 text-white rounded-full text-sm">${s}</span>`).join('') || '<span class="opacity-60">-</span>'}
                             </div>
@@ -1350,11 +1350,15 @@
             modal.className = 'modal-overlay fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50';
             modal.innerHTML = `
                 <div class="modal-content dynamic-surface rounded-2xl shadow-2xl p-6 max-w-lg w-full border-2 border-gray-700">
-                    <h2 class="dynamic-text text-2xl font-bold mb-4">�� تقديم اعتذار عن الخدمة</h2>
+                    <h2 class="dynamic-text text-2xl font-bold mb-4"> تقديم اعتذار عن الخدمة</h2>
                     <form id="absence-form" onsubmit="handleRequestAbsence(event)" class="space-y-4">
                         <div>
                             <label class="block dynamic-text font-semibold mb-2">تاريخ الغياب</label>
                             <input type="date" id="absence-date" required class="w-full px-4 py-3 rounded-lg border-2 border-gray-600 bg-gray-800 dynamic-text">
+                        </div>
+                        <div>
+                            <label class="block dynamic-text font-semibold mb-2">البديل</label>
+                            <textarea id="absence-reason" required rows="4" class="w-full px-4 py-3 rounded-lg border-2 border-gray-600 bg-gray-800 dynamic-text" placeholder="اذكر سبب الغياب..."></textarea>
                         </div>
                         <div>
                             <label class="block dynamic-text font-semibold mb-2">سبب الغياب</label>
@@ -1362,7 +1366,7 @@
                         </div>
                         <div class="flex gap-3">
                             <button type="submit" class="flex-1 dynamic-secondary-btn text-white py-3 px-6 rounded-lg font-bold btn-primary">
-                                ✅ إ��سال الطلب
+                                ✅ إرسال الطلب
                             </button>
                             <button type="button" onclick="this.closest('.modal-overlay').remove()" class="flex-1 bg-gray-600 text-white py-3 px-6 rounded-lg font-bold btn-primary">
                                 ❌ إلغاء
@@ -1566,7 +1570,7 @@
                         }).join('')}
                         <div class="flex gap-3 mt-6">
                             <button type="submit" class="flex-1 dynamic-secondary-btn text-white py-3 px-6 rounded-lg font-bold btn-primary">
-                                💾 حف�� الحضور
+                                💾 حفظ الحضور
                             </button>
                             <button type="button" onclick="this.closest('.modal-overlay').remove()" class="flex-1 bg-gray-600 text-white py-3 px-6 rounded-lg font-bold btn-primary">
                                 ❌ إلغاء
@@ -1674,7 +1678,7 @@
             
             const typeNames = {
                 coptic: 'اللغة القبطية',
-                rites: 'الطقوس ا��كنسية',
+                rites: 'الطقوس الكنسية',
                 hymns: 'التسميع الأسبوعي'
             };
             
@@ -1684,7 +1688,7 @@
             modal.className = 'modal-overlay fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50';
             modal.innerHTML = `
                 <div class="modal-content dynamic-surface rounded-2xl shadow-2xl p-6 max-w-4xl w-full max-h-[90%] overflow-y-auto border-2 border-gray-700">
-                    <h2 class="dynamic-text text-2xl font-bold mb-4">⭐ تسجيل د��جات ${typeNames[gradeType]}</h2>
+                    <h2 class="dynamic-text text-2xl font-bold mb-4">⭐ تسجيل درجات ${typeNames[gradeType]}</h2>
                     <div class="mb-4">
                         <label class="block dynamic-text font-semibold mb-2">اختر الأسبوع</label>
                         <select id="grade-week-select" onchange="loadGradesForWeek('${gradeType}')" class="w-full px-4 py-3 rounded-lg border-2 border-gray-600 bg-gray-800 dynamic-text">
@@ -1828,7 +1832,7 @@
                     <header class="dynamic-surface rounded-2xl shadow-lg p-6 mb-6 fade-in border border-gray-700">
                         <div class="flex justify-between items-center flex-wrap gap-4">
                             <div>
-                                <h1 class="dynamic-text text-2xl font-bold">��️ لوحة المسؤ��ل</h1>
+                                <h1 class="dynamic-text text-2xl font-bold">لوحة المسؤول الإدارية</h1>
                                 <p class="center-name dynamic-text text-3xl font-bold mt-2">${config.center_name || defaultConfig.center_name}</p>
                             </div>
                             <div class="flex gap-3">
@@ -1849,14 +1853,14 @@
                             <div class="text-sm opacity-90">إجمالي الدارسين</div>
                         </div>
                         <div class="stat-card text-white p-6 rounded-xl shadow-lg">
-                            <div class="text-4xl mb-2">����</div>
+                            <div class="text-4xl mb-2">👩‍🏫</div>
                             <div class="text-3xl font-bold">${teachers.length}</div>
                             <div class="text-sm opacity-90">إجمالي الخدام</div>
                         </div>
                         <div class="stat-card text-white p-6 rounded-xl shadow-lg">
                             <div class="text-4xl mb-2">📚</div>
                             <div class="text-3xl font-bold">${classes.length}</div>
-                            <div class="text-sm opacity-90">��لفصول الدراسية</div>
+                            <div class="text-sm opacity-90">الفصول الدراسية</div>
                         </div>
                         <div class="stat-card text-white p-6 rounded-xl shadow-lg">
                             <div class="text-4xl mb-2">📊</div>
@@ -1868,8 +1872,8 @@
                     <div class="grid md:grid-cols-2 gap-6 mb-6 slide-up">
                         <button onclick="showAddTeacher()" class="dynamic-surface p-8 rounded-2xl shadow-lg hover:shadow-xl card-hover border border-gray-700">
                             <div class="text-5xl mb-3">🎓</div>
-                            <h3 class="dynamic-text text-2xl font-bold">��ضافة خادم جديد</h3>
-                            <p class="dynamic-text opacity-60 mt-2">إضافة خا��م للنظام</p>
+                            <h3 class="dynamic-text text-2xl font-bold">أضافة خادم جديد</h3>
+                            <p class="dynamic-text opacity-60 mt-2">إضافة خادم للنظام</p>
                         </button>
                         <button onclick="showAddStudent()" class="dynamic-surface p-8 rounded-2xl shadow-lg hover:shadow-xl card-hover border border-gray-700">
                             <div class="text-5xl mb-3">👦</div>
@@ -1895,7 +1899,7 @@
 
                     <div class="grid md:grid-cols-2 gap-6">
                         <div class="dynamic-surface rounded-2xl shadow-lg p-6 border border-gray-700">
-                            <h2 class="dynamic-text text-2xl font-bold mb-4">��� قائمة ال��دام</h2>
+                            <h2 class="dynamic-text text-2xl font-bold mb-4">👩‍🏫 قائمة الخدام</h2>
                             <div class="space-y-3">
                                 ${teachers.map(teacher => {
                                     const studentCount = getStudentsByTeacher(teacher.id).length;
@@ -1914,7 +1918,7 @@
                                             </div>
                                         </div>
                                     `;
-                                }).join('') || '<p class="text-center opacity-60">لا يوجد خد��م بعد</p>'}
+                                }).join('') || '<p class="text-center opacity-60">لا يوجد خدام بعد</p>'}
                             </div>
                         </div>
 
@@ -1933,7 +1937,7 @@
                                                 </div>
                                                 <button onclick="confirmDelete('${student.id}', 'student', '${student.name}')" 
                                                     class="bg-red-500 text-white px-3 py-2 rounded-lg text-sm btn-primary">
-                                                    ����️
+                                                    🗑️ حذف
                                                 </button>
                                             </div>
                                         </div>
@@ -1954,7 +1958,7 @@
             modal.className = 'modal-overlay fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50';
             modal.innerHTML = `
                 <div class="modal-content dynamic-surface rounded-2xl shadow-2xl p-6 max-w-4xl w-full max-h-[90%] overflow-y-auto border-2 border-gray-700">
-                    <h2 class="dynamic-text text-2xl font-bold mb-4">📋 إدارة الحضور - ��ميع الأسابيع</h2>
+                    <h2 class="dynamic-text text-2xl font-bold mb-4">📋 إدارة الحضور - جميع الأسابيع</h2>
                     <div class="mb-4">
                         <label class="block dynamic-text font-semibold mb-2">اختر الأسبوع</label>
                         <select id="admin-week-select" onchange="loadAdminAttendance()" class="w-full px-4 py-3 rounded-lg border-2 border-gray-600 bg-gray-800 dynamic-text">
@@ -1964,7 +1968,7 @@
                     <div id="admin-attendance-list" class="space-y-2"></div>
                     <div class="mt-4 flex gap-3">
                         <button onclick="saveAdminAttendance()" class="flex-1 dynamic-secondary-btn text-white py-3 px-6 rounded-lg font-bold btn-primary">
-                            💾 ح��ظ التعديلات
+                            💾 حفظ التعديلات
                         </button>
                         <button onclick="document.querySelector('.modal-overlay').remove()" class="flex-1 bg-gray-600 text-white py-3 px-6 rounded-lg font-bold btn-primary">
                             ❌ إغلاق
