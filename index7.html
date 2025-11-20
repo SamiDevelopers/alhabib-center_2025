@@ -1,0 +1,908 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>نظام مركز الحبيب للألحان والدراسات القبطية</title>
+  <script src="/_sdk/data_sdk.js"></script>
+  <script src="/_sdk/element_sdk.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&amp;display=swap" rel="stylesheet">
+  <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Cairo', sans-serif !important;
+        }
+        
+        html, body {
+            height: 100%;
+            font-family: 'Cairo', sans-serif !important;
+            direction: rtl;
+        }
+        
+        body {
+            box-sizing: border-box;
+            background: linear-gradient(135deg, #FFF8DC 0%, #FAEBD7 100%);
+        }
+        
+        .coptic-pattern {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .coptic-pattern::before {
+            content: "✝";
+            position: absolute;
+            top: -20px;
+            right: -20px;
+            font-size: 120px;
+            opacity: 0.05;
+            color: #CD7F32;
+            transform: rotate(15deg);
+        }
+
+        .admin-gradient {
+            background: linear-gradient(135deg, #8B0000, #DC143C) !important;
+        }
+        
+        .teacher-gradient {
+            background: linear-gradient(135deg, #006400, #228B22) !important;
+        }
+        
+        .student-gradient {
+            background: linear-gradient(135deg, #191970, #4169E1) !important;
+        }
+
+        .toast {
+            animation: slideIn 0.3s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .card-hover {
+            transition: all 0.3s ease;
+        }
+
+        .card-hover:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 24px rgba(205, 127, 50, 0.4);
+        }
+
+        .btn-primary {
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            transform: scale(1.05);
+        }
+
+        .loading {
+            pointer-events: none;
+            opacity: 0.6;
+        }
+
+        .spinner {
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top: 3px solid white;
+            width: 20px;
+            height: 20px;
+            animation: spin 1s linear infinite;
+            display: inline-block;
+            margin-left: 8px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+  <style>@view-transition { navigation: auto; }</style>
+ </head>
+ <body class="min-h-full">
+  <div id="app" class="min-h-full"></div>
+  <div id="toast-container" class="fixed top-5 left-5 z-50 space-y-2"></div>
+  <script>
+        const defaultConfig = {
+            center_name: 'مركز الحبيب للألحان',
+            center_subtitle: 'والدراسات القبطية',
+            welcome_message: 'مرحباً بك في',
+            footer_text: 'صُنع بحب لخدمة الكنيسة'
+        };
+
+        let currentUser = null;
+        let allRecords = [];
+        let googleConfig = {
+            scriptUrl: '',
+            driveFolderId: ''
+        };
+
+        const TOTAL_WEEKS = 15;
+        const ADMIN_USERNAME = 'admin';
+        const ADMIN_PASSWORD = 'admin123';
+
+        const SEMESTER_WEEKS = [
+            { number: 1, start: '2024-09-05', end: '2024-09-10' },
+            { number: 2, start: '2024-09-12', end: '2024-09-17' },
+            { number: 3, start: '2024-09-19', end: '2024-09-24' },
+            { number: 4, start: '2024-09-26', end: '2024-10-01' },
+            { number: 5, start: '2024-10-03', end: '2024-10-08' },
+            { number: 6, start: '2024-10-10', end: '2024-10-15' },
+            { number: 7, start: '2024-10-17', end: '2024-10-22' },
+            { number: 8, start: '2024-10-24', end: '2024-10-29' },
+            { number: 9, start: '2024-10-31', end: '2024-11-05' },
+            { number: 10, start: '2024-11-07', end: '2024-11-12' },
+            { number: 11, start: '2024-11-14', end: '2024-11-19' },
+            { number: 12, start: '2024-11-21', end: '2024-11-26' },
+            { number: 13, start: '2024-11-28', end: '2024-12-03' },
+            { number: 14, start: '2024-12-05', end: '2024-12-10' },
+            { number: 15, start: '2024-12-12', end: '2024-12-17' }
+        ];
+
+        const dataHandler = {
+            onDataChanged(data) {
+                allRecords = data;
+                if (currentUser) {
+                    if (currentUser.type === 'admin') renderAdminDashboard();
+                    else if (currentUser.type === 'teacher') renderTeacherDashboard();
+                    else if (currentUser.type === 'student') renderStudentDashboard();
+                }
+            }
+        };
+
+        async function initializeApp() {
+            if (!window.dataSdk) {
+                renderLoginPage();
+                return;
+            }
+
+            const result = await window.dataSdk.init(dataHandler);
+            if (!result.isOk) {
+                renderLoginPage();
+                return;
+            }
+
+            const savedGoogle = localStorage.getItem('googleConfig');
+            if (savedGoogle) {
+                googleConfig = JSON.parse(savedGoogle);
+            }
+
+            const savedSession = localStorage.getItem('currentUser');
+            if (savedSession) {
+                currentUser = JSON.parse(savedSession);
+                if (currentUser.type === 'admin') renderAdminDashboard();
+                else if (currentUser.type === 'teacher') renderTeacherDashboard();
+                else if (currentUser.type === 'student') renderStudentDashboard();
+            } else {
+                renderLoginPage();
+            }
+        }
+
+        function showToast(message, type = 'success') {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            const bgColor = type === 'success' ? 'bg-green-500' : type === 'error' ? 'bg-red-500' : 'bg-blue-500';
+            const icon = type === 'success' ? '✓' : type === 'error' ? '✗' : 'ℹ';
+            toast.className = `toast ${bgColor} text-white px-6 py-3 rounded-lg shadow-lg flex items-center gap-2`;
+            toast.innerHTML = `<span class="text-xl">${icon}</span><span>${message}</span>`;
+            container.appendChild(toast);
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                toast.style.transform = 'translateX(100%)';
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+
+        function generateCode(prefix) {
+            if (prefix === 'ST') {
+                const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+                let code = '';
+                for (let i = 0; i < 8; i++) {
+                    code += chars.charAt(Math.floor(Math.random() * chars.length));
+                }
+                return code;
+            }
+            const timestamp = Date.now().toString().slice(-6);
+            const random = Math.floor(Math.random() * 1000).toString().padStart(3, '0');
+            return `${prefix}${timestamp}${random}`;
+        }
+
+        function getRecordsByType(type) {
+            return allRecords.filter(r => r.type === type);
+        }
+
+        function getRecordByCode(code) {
+            return allRecords.find(r => r.code === code);
+        }
+
+        function getStudentsByTeacher(teacherId) {
+            return allRecords.filter(r => r.type === 'student' && r.teacher_id === teacherId);
+        }
+
+        function getCurrentWeek() {
+            const today = new Date();
+            for (let week of SEMESTER_WEEKS) {
+                const start = new Date(week.start);
+                const end = new Date(week.end);
+                if (today >= start && today <= end) {
+                    return week;
+                }
+            }
+            return null;
+        }
+
+        function canEditAttendance() {
+            const today = new Date();
+            const currentWeek = getCurrentWeek();
+            
+            if (!currentWeek) return { canEdit: false, reason: 'خارج نطاق الفصل الدراسي' };
+            
+            const weekStart = new Date(currentWeek.start);
+            const tuesday = new Date(weekStart);
+            tuesday.setDate(tuesday.getDate() + 4);
+            
+            if (today <= tuesday) {
+                return { canEdit: true, week: currentWeek };
+            } else {
+                return { canEdit: false, reason: 'انتهت فترة تسجيل الحضور للأسبوع الحالي' };
+            }
+        }
+
+        function renderLoginPage() {
+            const config = window.elementSdk?.config || defaultConfig;
+            document.getElementById('app').innerHTML = `
+                <main class="min-h-full flex items-center justify-center p-4">
+                    <div class="w-full max-w-md p-8 rounded-2xl shadow-2xl fade-in border-2 coptic-pattern bg-white" style="border-color: rgba(205, 127, 50, 0.3);">
+                        <div class="text-center mb-8">
+                            <div class="text-6xl mb-4">✝️</div>
+                            <h1 class="center-name text-3xl font-bold mb-2 text-amber-800">${config.center_name || defaultConfig.center_name}</h1>
+                            <p class="center-subtitle text-lg text-gray-700">${config.center_subtitle || defaultConfig.center_subtitle}</p>
+                        </div>
+
+                        <form id="login-form" class="space-y-4">
+                            <div>
+                                <label for="admin-username" class="block font-semibold mb-2 text-gray-800">اسم المستخدم</label>
+                                <input type="text" id="admin-username" required
+                                    class="w-full px-4 py-3 rounded-lg border-2 bg-white text-gray-900" style="border-color: rgba(205, 127, 50, 0.4);"
+                                    placeholder="admin">
+                            </div>
+
+                            <div>
+                                <label for="admin-password" class="block font-semibold mb-2 text-gray-800">كلمة المرور</label>
+                                <input type="password" id="admin-password" required
+                                    class="w-full px-4 py-3 rounded-lg border-2 bg-white text-gray-900" style="border-color: rgba(205, 127, 50, 0.4);"
+                                    placeholder="••••••••">
+                            </div>
+
+                            <button type="submit" class="w-full admin-gradient text-white py-3 px-6 rounded-lg font-bold text-lg btn-primary">
+                                🔐 دخول
+                            </button>
+                        </form>
+
+                        <div class="mt-6 text-center">
+                            <p class="footer-text text-sm text-gray-600">${config.footer_text || defaultConfig.footer_text}</p>
+                        </div>
+                    </div>
+                </main>
+            `;
+
+            document.getElementById('login-form').addEventListener('submit', async (event) => {
+                event.preventDefault();
+                const username = document.getElementById('admin-username').value;
+                const password = document.getElementById('admin-password').value;
+
+                if (username === ADMIN_USERNAME && password === ADMIN_PASSWORD) {
+                    currentUser = { type: 'admin', name: 'المسؤول' };
+                    localStorage.setItem('currentUser', JSON.stringify(currentUser));
+                    renderAdminDashboard();
+                } else {
+                    showToast('اسم المستخدم أو كلمة المرور غير صحيحة', 'error');
+                }
+            });
+        }
+
+        function logout() {
+            currentUser = null;
+            localStorage.removeItem('currentUser');
+            renderLoginPage();
+            showToast('تم تسجيل الخروج بنجاح', 'success');
+        }
+
+        function renderAdminDashboard() {
+            const config = window.elementSdk?.config || defaultConfig;
+            const students = getRecordsByType('student');
+            const teachers = getRecordsByType('teacher');
+            const classes = [...new Set(students.map(s => s.center_class))];
+            
+            const totalAttendance = allRecords.filter(r => r.type === 'attendance' && r.present).length;
+            const totalPossible = students.length * TOTAL_WEEKS;
+            const attendancePercentage = totalPossible > 0 ? Math.round((totalAttendance / totalPossible) * 100) : 0;
+
+            document.getElementById('app').innerHTML = `
+                <div class="min-h-full p-4">
+                    <header class="admin-gradient rounded-2xl shadow-lg p-6 mb-6 fade-in coptic-pattern">
+                        <div class="flex justify-between items-center flex-wrap gap-4">
+                            <div>
+                                <h1 class="text-white text-2xl font-bold">🛠️ لوحة المسؤول</h1>
+                                <p class="center-name text-white text-3xl font-bold mt-2">${config.center_name || defaultConfig.center_name}</p>
+                            </div>
+                            <button onclick="logout()" class="bg-white bg-opacity-20 hover:bg-opacity-30 text-white px-6 py-2 rounded-lg font-semibold btn-primary">
+                                🚪 خروج
+                            </button>
+                        </div>
+                    </header>
+
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+                        <div class="bg-gradient-to-br from-blue-600 to-blue-800 text-white p-6 rounded-xl shadow-lg">
+                            <div class="text-4xl mb-2">👥</div>
+                            <div class="text-3xl font-bold">${students.length}</div>
+                            <div class="text-sm opacity-90">إجمالي الدارسين</div>
+                        </div>
+                        <div class="bg-gradient-to-br from-green-600 to-green-800 text-white p-6 rounded-xl shadow-lg">
+                            <div class="text-4xl mb-2">🎓</div>
+                            <div class="text-3xl font-bold">${teachers.length}</div>
+                            <div class="text-sm opacity-90">إجمالي الخدام</div>
+                        </div>
+                        <div class="bg-gradient-to-br from-purple-600 to-purple-800 text-white p-6 rounded-xl shadow-lg">
+                            <div class="text-4xl mb-2">📚</div>
+                            <div class="text-3xl font-bold">${classes.length}</div>
+                            <div class="text-sm opacity-90">الفصول الدراسية</div>
+                        </div>
+                        <div class="bg-gradient-to-br from-amber-600 to-amber-800 text-white p-6 rounded-xl shadow-lg">
+                            <div class="text-4xl mb-2">📊</div>
+                            <div class="text-3xl font-bold">${attendancePercentage}%</div>
+                            <div class="text-sm opacity-90">نسبة الحضور</div>
+                        </div>
+                    </div>
+
+                    <div class="grid md:grid-cols-2 gap-6 mb-6">
+                        <button onclick="showAddTeacher()" class="bg-white p-8 rounded-2xl shadow-lg hover:shadow-xl card-hover">
+                            <div class="text-5xl mb-3">🎓</div>
+                            <h3 class="text-gray-800 text-2xl font-bold">إضافة خادم جديد</h3>
+                            <p class="text-gray-600 mt-2">إضافة خادم للنظام</p>
+                        </button>
+                        <button onclick="showAddStudent()" class="bg-white p-8 rounded-2xl shadow-lg hover:shadow-xl card-hover">
+                            <div class="text-5xl mb-3">👦</div>
+                            <h3 class="text-gray-800 text-2xl font-bold">إضافة دارس جديد</h3>
+                            <p class="text-gray-600 mt-2">إضافة دارس للنظام</p>
+                        </button>
+                    </div>
+
+                    <div class="bg-white rounded-2xl shadow-lg p-6 mb-6">
+                        <h2 class="text-gray-800 text-2xl font-bold mb-4">⚙️ إدارة النظام</h2>
+                        <div class="grid md:grid-cols-3 gap-3">
+                            <button onclick="manageAttendance()" class="bg-gradient-to-r from-blue-500 to-blue-600 text-white py-3 px-6 rounded-lg font-semibold btn-primary">
+                                📋 إدارة الحضور
+                            </button>
+                            <button onclick="reviewAbsenceRequests()" class="bg-gradient-to-r from-amber-500 to-amber-600 text-white py-3 px-6 rounded-lg font-semibold btn-primary">
+                                📝 طلبات الاعتذار
+                            </button>
+                            <button onclick="exportDataAsJSON()" class="bg-gradient-to-r from-purple-500 to-purple-600 text-white py-3 px-6 rounded-lg font-semibold btn-primary">
+                                📥 تنزيل البيانات
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <div class="bg-white rounded-2xl shadow-lg p-6">
+                            <h2 class="text-gray-800 text-2xl font-bold mb-4">🎓 قائمة الخدام</h2>
+                            <div class="space-y-3 max-h-96 overflow-y-auto">
+                                ${teachers.map(teacher => {
+                                    const studentCount = getStudentsByTeacher(teacher.id).length;
+                                    return `
+                                        <div class="border-2 border-gray-200 rounded-lg p-4 hover:border-amber-500">
+                                            <div class="flex justify-between items-center">
+                                                <div>
+                                                    <h3 class="text-gray-800 font-bold">${teacher.name}</h3>
+                                                    <p class="text-sm text-gray-600">كود: ${teacher.code}</p>
+                                                    <p class="text-sm text-gray-600">👥 ${studentCount} دارس</p>
+                                                </div>
+                                                <button onclick="confirmDelete('${teacher.__backendId}', 'teacher', '${teacher.name}')" 
+                                                    class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg text-sm btn-primary">
+                                                    🗑️ حذف
+                                                </button>
+                                            </div>
+                                        </div>
+                                    `;
+                                }).join('') || '<p class="text-center text-gray-500">لا يوجد خدام بعد</p>'}
+                            </div>
+                        </div>
+
+                        <div class="bg-white rounded-2xl shadow-lg p-6">
+                            <h2 class="text-gray-800 text-2xl font-bold mb-4">👥 قائمة الدارسين</h2>
+                            <div class="space-y-3 max-h-96 overflow-y-auto">
+                                ${students.slice(0, 10).map(student => {
+                                    const attendance = allRecords.filter(r => r.type === 'attendance' && r.code === student.code && r.present).length;
+                                    return `
+                                        <div class="border-2 border-gray-200 rounded-lg p-4 hover:border-amber-500">
+                                            <div class="flex justify-between items-start gap-3">
+                                                <div>
+                                                    <h3 class="text-gray-800 font-bold">${student.name}</h3>
+                                                    <p class="text-sm text-gray-600">كود: ${student.code}</p>
+                                                    <p class="text-sm text-gray-600">📅 ${attendance}/${TOTAL_WEEKS}</p>
+                                                </div>
+                                                <button onclick="confirmDelete('${student.__backendId}', 'student', '${student.name}')" 
+                                                    class="bg-red-500 hover:bg-red-600 text-white px-3 py-2 rounded-lg text-sm btn-primary">
+                                                    🗑️
+                                                </button>
+                                            </div>
+                                        </div>
+                                    `;
+                                }).join('') || '<p class="text-center text-gray-500">لا يوجد دارسون بعد</p>'}
+                                ${students.length > 10 ? `<p class="text-center text-gray-500 mt-2">... و ${students.length - 10} دارس آخرين</p>` : ''}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function showAddTeacher() {
+            const modal = document.createElement('div');
+            modal.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50';
+            modal.innerHTML = `
+                <div class="bg-white rounded-2xl shadow-2xl p-8 max-w-2xl w-full max-h-[90%] overflow-y-auto">
+                    <h2 class="text-3xl font-bold mb-6 text-center text-gray-800">➕ إضافة خادم جديد</h2>
+                    <form id="teacher-form" class="space-y-5">
+                        <div class="grid md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block font-bold mb-2 text-lg text-gray-800">اسم الخادم *</label>
+                                <input type="text" id="teacher-name" required
+                                    class="w-full px-4 py-3 rounded-lg text-lg border-2 border-gray-300"
+                                    placeholder="الاسم الكامل">
+                            </div>
+                            <div>
+                                <label class="block font-bold mb-2 text-lg text-gray-800">رقم الهاتف *</label>
+                                <input type="tel" id="teacher-phone" required
+                                    class="w-full px-4 py-3 rounded-lg text-lg border-2 border-gray-300"
+                                    placeholder="01234567890">
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <label class="block font-bold mb-2 text-lg text-gray-800">كلمة المرور *</label>
+                            <input type="password" id="teacher-pwd" required
+                                class="w-full px-4 py-3 rounded-lg text-lg border-2 border-gray-300"
+                                placeholder="كلمة مرور قوية">
+                        </div>
+
+                        <div>
+                            <label class="block font-bold mb-2 text-lg text-gray-800">الفصل داخل المركز *</label>
+                            <select id="teacher-class" required class="w-full px-4 py-3 rounded-lg text-lg border-2 border-gray-300">
+                                <option value="">-- اختر الفصل --</option>
+                                <option value="تمهيدي">تمهيدي</option>
+                                <option value="أولي وثانية">أولي وثانية</option>
+                                <option value="ثالثة ورابعة">ثالثة ورابعة</option>
+                                <option value="خامسة وسادسة">خامسة وسادسة</option>
+                                <option value="أعدادي - ثانوي">أعدادي - ثانوي</option>
+                                <option value="شباب وخريجين">شباب وخريجين</option>
+                            </select>
+                        </div>
+
+                        <div class="border-2 border-gray-300 rounded-lg p-5 bg-gray-50">
+                            <p class="text-gray-800 font-bold mb-4 text-xl">📚 مواد التخصص</p>
+                            <div class="space-y-3">
+                                <label class="flex items-center gap-3 cursor-pointer text-lg">
+                                    <input type="checkbox" id="spec-coptic" class="w-6 h-6 rounded">
+                                    <span class="text-gray-800 font-semibold">اللغة القبطية</span>
+                                </label>
+                                <label class="flex items-center gap-3 cursor-pointer text-lg">
+                                    <input type="checkbox" id="spec-rites" class="w-6 h-6 rounded">
+                                    <span class="text-gray-800 font-semibold">الطقوس الكنسية</span>
+                                </label>
+                                <label class="flex items-center gap-3 cursor-pointer text-lg">
+                                    <input type="checkbox" id="spec-saved" class="w-6 h-6 rounded">
+                                    <span class="text-gray-800 font-semibold">المحفوظات والأجبية</span>
+                                </label>
+                                <label class="flex items-center gap-3 cursor-pointer text-lg">
+                                    <input type="checkbox" id="spec-hymns" class="w-6 h-6 rounded">
+                                    <span class="text-gray-800 font-semibold">الألحان والتسبحة</span>
+                                </label>
+                                <label class="flex items-center gap-3 cursor-pointer text-lg">
+                                    <input type="checkbox" id="spec-admin" class="w-6 h-6 rounded">
+                                    <span class="text-gray-800 font-semibold">خادم إداري</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="border-2 border-gray-300 rounded-lg p-5 bg-gray-50">
+                            <p class="text-gray-800 font-bold mb-4 text-xl">👥 المجموعات والأدوار</p>
+                            <div class="space-y-3">
+                                <label class="flex items-center gap-3 cursor-pointer text-lg">
+                                    <input type="checkbox" id="team-prep" class="w-6 h-6 rounded">
+                                    <span class="text-gray-800 font-semibold">مجموعة الإعداد الدراسي</span>
+                                </label>
+                                <label class="flex items-center gap-3 cursor-pointer text-lg">
+                                    <input type="checkbox" id="team-control" class="w-6 h-6 rounded">
+                                    <span class="text-gray-800 font-semibold">مجموعة الكنترول</span>
+                                </label>
+                                <label class="flex items-center gap-3 cursor-pointer text-lg">
+                                    <input type="checkbox" id="team-comm" class="w-6 h-6 rounded">
+                                    <span class="text-gray-800 font-semibold">مجموعة الاتصالات والمتابعة</span>
+                                </label>
+                                <label class="flex items-center gap-3 cursor-pointer text-lg">
+                                    <input type="checkbox" id="team-trips" class="w-6 h-6 rounded">
+                                    <span class="text-gray-800 font-semibold">مجموعة الرحلات والمؤتمرات</span>
+                                </label>
+                                <label class="flex items-center gap-3 cursor-pointer text-lg">
+                                    <input type="checkbox" id="team-other" class="w-6 h-6 rounded">
+                                    <span class="text-gray-800 font-semibold">أدوار إدارية أخرى</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="flex gap-4 pt-4">
+                            <button type="submit" class="flex-1 bg-green-600 hover:bg-green-700 text-white py-4 px-6 rounded-xl font-bold text-xl shadow-lg btn-primary">
+                                ✅ إضافة الخادم
+                            </button>
+                            <button type="button" onclick="this.closest('.fixed').remove()" 
+                                class="flex-1 bg-red-600 hover:bg-red-700 text-white py-4 px-6 rounded-xl font-bold text-xl shadow-lg btn-primary">
+                                ❌ إلغاء
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            `;
+            document.body.appendChild(modal);
+
+            document.getElementById('teacher-form').addEventListener('submit', async (event) => {
+                event.preventDefault();
+                
+                const submitBtn = event.target.querySelector('button[type="submit"]');
+                submitBtn.disabled = true;
+                submitBtn.classList.add('loading');
+                submitBtn.innerHTML = '<span class="spinner"></span>جاري الإضافة...';
+
+                const teacherData = {
+                    id: 'teacher_' + Date.now(),
+                    type: 'teacher',
+                    name: document.getElementById('teacher-name').value,
+                    code: generateCode('T'),
+                    phone: document.getElementById('teacher-phone').value,
+                    password: document.getElementById('teacher-pwd').value,
+                    center_class: document.getElementById('teacher-class').value,
+                    coptic_lang: document.getElementById('spec-coptic').checked,
+                    church_rites: document.getElementById('spec-rites').checked,
+                    saved_texts: document.getElementById('spec-saved').checked,
+                    hymns: document.getElementById('spec-hymns').checked,
+                    admin_role: document.getElementById('spec-admin').checked,
+                    academic_prep: document.getElementById('team-prep').checked,
+                    control_team: document.getElementById('team-control').checked,
+                    communication_team: document.getElementById('team-comm').checked,
+                    trips_team: document.getElementById('team-trips').checked,
+                    other_admin: document.getElementById('team-other').checked,
+                    created_at: new Date().toISOString()
+                };
+
+                const result = await window.dataSdk.create(teacherData);
+
+                if (result.isOk) {
+                    showToast(`تم إضافة الخادم بنجاح! الكود: ${teacherData.code}`, 'success');
+                    modal.remove();
+                } else {
+                    showToast('فشل في إضافة الخادم', 'error');
+                    submitBtn.disabled = false;
+                    submitBtn.classList.remove('loading');
+                    submitBtn.innerHTML = '✅ إضافة الخادم';
+                }
+            });
+        }
+
+        function showAddStudent() {
+            const modal = document.createElement('div');
+            modal.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50';
+            modal.innerHTML = `
+                <div class="bg-white rounded-2xl shadow-2xl p-8 max-w-4xl w-full max-h-[90%] overflow-y-auto">
+                    <h2 class="text-3xl font-bold mb-6 text-center text-gray-800">➕ إضافة دارس جديد</h2>
+                    <form id="student-form" class="space-y-4">
+                        <div class="grid md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block font-semibold mb-2 text-gray-800">نوع الدارس *</label>
+                                <select id="student-type" required class="w-full px-4 py-3 rounded-lg border-2 border-gray-300">
+                                    <option value="دارس جديد">دارس جديد</option>
+                                    <option value="دارس قديم">دارس قديم</option>
+                                </select>
+                            </div>
+                            
+                            <div>
+                                <label class="block font-semibold mb-2 text-gray-800">كود الدارس</label>
+                                <input type="text" readonly
+                                    class="w-full px-4 py-3 rounded-lg border-2 border-gray-300 bg-gray-100 text-gray-600"
+                                    value="سيتم إنشاؤه تلقائياً">
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block font-semibold mb-2 text-gray-800">اسم الدارس بالكامل *</label>
+                            <input type="text" id="student-name" required
+                                class="w-full px-4 py-3 rounded-lg border-2 border-gray-300"
+                                placeholder="الاسم الكامل">
+                        </div>
+
+                        <div class="grid md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block font-semibold mb-2 text-gray-800">النوع *</label>
+                                <select id="student-gender" required class="w-full px-4 py-3 rounded-lg border-2 border-gray-300">
+                                    <option value="">-- اختر --</option>
+                                    <option value="ذكر">ذكر</option>
+                                    <option value="أنثى">أنثى</option>
+                                </select>
+                            </div>
+
+                            <div>
+                                <label class="block font-semibold mb-2 text-gray-800">تاريخ الميلاد</label>
+                                <input type="date" id="student-birthdate"
+                                    class="w-full px-4 py-3 rounded-lg border-2 border-gray-300">
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block font-semibold mb-2 text-gray-800">المرحلة الدراسية *</label>
+                            <select id="student-grade" required class="w-full px-4 py-3 rounded-lg border-2 border-gray-300">
+                                <option value="">-- اختر المرحلة --</option>
+                                <option value="KG1">KG1</option>
+                                <option value="KG2">KG2</option>
+                                <option value="الصف الأول الابتدائي">الصف الأول الابتدائي</option>
+                                <option value="الصف الثاني الابتدائي">الصف الثاني الابتدائي</option>
+                                <option value="الصف الثالث الابتدائي">الصف الثالث الابتدائي</option>
+                                <option value="الصف الرابع الابتدائي">الصف الرابع الابتدائي</option>
+                                <option value="الصف الخامس الابتدائي">الصف الخامس الابتدائي</option>
+                                <option value="الصف السادس الابتدائي">الصف السادس الابتدائي</option>
+                                <option value="الصف الأول الإعدادي">الصف الأول الإعدادي</option>
+                                <option value="الصف الثاني الإعدادي">الصف الثاني الإعدادي</option>
+                                <option value="الصف الثالث الإعدادي">الصف الثالث الإعدادي</option>
+                                <option value="الصف الأول الثانوي">الصف الأول الثانوي</option>
+                                <option value="الصف الثاني الثانوي">الصف الثاني الثانوي</option>
+                                <option value="الصف الثالث الثانوي">الصف الثالث الثانوي</option>
+                                <option value="شباب">شباب</option>
+                                <option value="خريجين">خريجين</option>
+                            </select>
+                        </div>
+
+                        <div class="grid md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block font-semibold mb-2 text-gray-800">رقم الهاتف 1</label>
+                                <input type="tel" id="student-phone1"
+                                    class="w-full px-4 py-3 rounded-lg border-2 border-gray-300"
+                                    placeholder="01234567890">
+                            </div>
+
+                            <div>
+                                <label class="block font-semibold mb-2 text-gray-800">رقم الهاتف 2</label>
+                                <input type="tel" id="student-phone2"
+                                    class="w-full px-4 py-3 rounded-lg border-2 border-gray-300"
+                                    placeholder="01234567890">
+                            </div>
+                        </div>
+
+                        <div class="grid md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block font-semibold mb-2 text-gray-800">حرف الفصل *</label>
+                                <select id="student-class-letter" required class="w-full px-4 py-3 rounded-lg border-2 border-gray-300">
+                                    <option value="">-- اختر --</option>
+                                    <option value="A">A</option>
+                                    <option value="B">B</option>
+                                    <option value="C">C</option>
+                                    <option value="D">D</option>
+                                    <option value="E">E</option>
+                                    <option value="F">F</option>
+                                </select>
+                            </div>
+
+                            <div>
+                                <label class="block font-semibold mb-2 text-gray-800">الفصل داخل المركز *</label>
+                                <select id="student-center-class" required class="w-full px-4 py-3 rounded-lg border-2 border-gray-300">
+                                    <option value="">-- اختر --</option>
+                                    <option value="تمهيدي">تمهيدي</option>
+                                    <option value="أولي وثانية">أولي وثانية</option>
+                                    <option value="ثالثة ورابعة">ثالثة ورابعة</option>
+                                    <option value="خامسة وسادسة">خامسة وسادسة</option>
+                                    <option value="أعدادي - ثانوي">أعدادي - ثانوي</option>
+                                    <option value="شباب وخريجين">شباب وخريجين</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block font-semibold mb-2 text-gray-800">رتبة الشماسية</label>
+                            <select id="student-rank" class="w-full px-4 py-3 rounded-lg border-2 border-gray-300">
+                                <option value="">------------------</option>
+                                <option value="أبصالطس">أبصالطس</option>
+                                <option value="أغنسطس">أغنسطس</option>
+                                <option value="لم يتم الرسامة">لم يتم الرسامة</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label class="block font-semibold mb-2 text-gray-800">العنوان</label>
+                            <textarea id="student-address" rows="2"
+                                class="w-full px-4 py-3 rounded-lg border-2 border-gray-300"
+                                placeholder="العنوان الكامل..."></textarea>
+                        </div>
+
+                        <div class="border-2 border-gray-300 rounded-lg p-4 bg-gray-50">
+                            <h3 class="text-gray-800 font-bold text-lg mb-3">✅ المستندات</h3>
+                            
+                            <div class="space-y-3">
+                                <label class="flex items-center gap-2 cursor-pointer">
+                                    <input type="checkbox" id="student-form-submitted" class="w-5 h-5 rounded">
+                                    <span class="text-gray-800 font-semibold">تم تسليم الاستمارة</span>
+                                </label>
+
+                                <label class="flex items-center gap-2 cursor-pointer">
+                                    <input type="checkbox" id="student-photo-submitted" class="w-5 h-5 rounded">
+                                    <span class="text-gray-800 font-semibold">تم تسليم الصورة الشخصية</span>
+                                </label>
+
+                                <label class="flex items-center gap-2 cursor-pointer">
+                                    <input type="checkbox" id="student-fees-paid" class="w-5 h-5 rounded">
+                                    <span class="text-gray-800 font-semibold">تم دفع قيمة الاستمارة</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="flex gap-3">
+                            <button type="submit" class="flex-1 bg-green-600 hover:bg-green-700 text-white py-4 px-6 rounded-xl font-bold text-xl shadow-lg btn-primary">
+                                ➕ إضافة الدارس
+                            </button>
+                            <button type="button" onclick="this.closest('.fixed').remove()" 
+                                class="flex-1 bg-red-600 hover:bg-red-700 text-white py-4 px-6 rounded-xl font-bold text-xl shadow-lg btn-primary">
+                                ❌ إلغاء
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            `;
+            document.body.appendChild(modal);
+
+            document.getElementById('student-form').addEventListener('submit', async (event) => {
+                event.preventDefault();
+                
+                const submitBtn = event.target.querySelector('button[type="submit"]');
+                submitBtn.disabled = true;
+                submitBtn.classList.add('loading');
+                submitBtn.innerHTML = '<span class="spinner"></span>جاري الإضافة...';
+
+                const centerClass = document.getElementById('student-center-class').value;
+                const teacher = allRecords.find(t => t.type === 'teacher' && t.center_class === centerClass);
+
+                const studentData = {
+                    id: 'student_' + Date.now(),
+                    type: 'student',
+                    student_type: document.getElementById('student-type').value,
+                    code: generateCode('ST'),
+                    name: document.getElementById('student-name').value,
+                    gender: document.getElementById('student-gender').value,
+                    birthdate: document.getElementById('student-birthdate').value,
+                    grade: document.getElementById('student-grade').value,
+                    phone1: document.getElementById('student-phone1').value,
+                    phone2: document.getElementById('student-phone2').value,
+                    class_letter: document.getElementById('student-class-letter').value,
+                    center_class: centerClass,
+                    rank: document.getElementById('student-rank').value,
+                    address: document.getElementById('student-address').value,
+                    teacher_id: teacher ? teacher.id : null,
+                    form_submitted: document.getElementById('student-form-submitted').checked,
+                    photo_submitted: document.getElementById('student-photo-submitted').checked,
+                    fees_paid: document.getElementById('student-fees-paid').checked,
+                    created_at: new Date().toISOString()
+                };
+
+                const result = await window.dataSdk.create(studentData);
+
+                if (result.isOk) {
+                    showToast(`تم إضافة الدارس بنجاح! الكود: ${studentData.code}`, 'success');
+                    modal.remove();
+                } else {
+                    showToast('فشل في إضافة الدارس', 'error');
+                    submitBtn.disabled = false;
+                    submitBtn.classList.remove('loading');
+                    submitBtn.innerHTML = '➕ إضافة الدارس';
+                }
+            });
+        }
+
+        function manageAttendance() {
+            showToast('جاري تحميل صفحة إدارة الحضور...', 'info');
+        }
+
+        function reviewAbsenceRequests() {
+            showToast('جاري تحميل طلبات الاعتذار...', 'info');
+        }
+
+        function exportDataAsJSON() {
+            const dataToExport = {
+                students: allRecords.filter(r => r.type === 'student'),
+                teachers: allRecords.filter(r => r.type === 'teacher'),
+                attendance: allRecords.filter(r => r.type === 'attendance'),
+                grades: allRecords.filter(r => r.type === 'grade'),
+                homework: allRecords.filter(r => r.type === 'homework'),
+                exportDate: new Date().toISOString()
+            };
+
+            const dataStr = JSON.stringify(dataToExport, null, 2);
+            const dataBlob = new Blob([dataStr], { type: 'application/json' });
+            const url = URL.createObjectURL(dataBlob);
+            
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `backup_${new Date().toISOString().split('T')[0]}.json`;
+            link.click();
+            
+            URL.revokeObjectURL(url);
+            showToast('تم تنزيل نسخة JSON بنجاح!', 'success');
+        }
+
+        function confirmDelete(backendId, type, name) {
+            const modal = document.createElement('div');
+            modal.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50';
+            modal.innerHTML = `
+                <div class="bg-white rounded-2xl shadow-2xl p-6 max-w-md w-full">
+                    <div class="text-center">
+                        <div class="text-6xl mb-4">⚠️</div>
+                        <h2 class="text-gray-800 text-2xl font-bold mb-4">تأكيد الحذف</h2>
+                        <p class="text-gray-700 mb-6">هل أنت متأكد من حذف: <strong>${name}</strong>؟</p>
+                        <div class="flex gap-3">
+                            <button onclick="deleteRecord('${backendId}')" class="flex-1 bg-red-500 hover:bg-red-600 text-white py-3 px-6 rounded-lg font-bold btn-primary">
+                                🗑️ حذف
+                            </button>
+                            <button onclick="this.closest('.fixed').remove()" 
+                                class="flex-1 bg-gray-500 hover:bg-gray-600 text-white py-3 px-6 rounded-lg font-bold btn-primary">
+                                ❌ إلغاء
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(modal);
+        }
+
+        async function deleteRecord(backendId) {
+            const record = allRecords.find(r => r.__backendId === backendId);
+            if (!record) {
+                showToast('السجل غير موجود', 'error');
+                return;
+            }
+
+            const result = await window.dataSdk.delete(record);
+
+            if (result.isOk) {
+                showToast('تم الحذف بنجاح', 'success');
+                document.querySelector('.fixed').remove();
+            } else {
+                showToast('فشل في الحذف', 'error');
+            }
+        }
+
+        function renderTeacherDashboard() {
+            showToast('تم تسجيل الدخول كخادم', 'success');
+        }
+
+        function renderStudentDashboard() {
+            showToast('تم تسجيل الدخول كدارس', 'success');
+        }
+
+        window.addEventListener('DOMContentLoaded', initializeApp);
+    </script>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9a18718ec32a70ec',t:'MTc2MzY0NjkxMS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
