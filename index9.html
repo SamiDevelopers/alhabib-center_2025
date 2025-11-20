@@ -1,0 +1,2277 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>نظام مركز الحبيب للألحان والدراسات القبطية</title>
+  <script src="/_sdk/data_sdk.js"></script>
+  <script src="/_sdk/element_sdk.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&amp;display=swap" rel="stylesheet">
+  <style>
+        body {
+            box-sizing: border-box;
+            font-family: 'Cairo', sans-serif;
+        }
+        
+        * {
+            box-sizing: border-box;
+        }
+
+        .toast {
+            animation: slideIn 0.3s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        .card-hover {
+            transition: all 0.3s ease;
+        }
+
+        .card-hover:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 24px rgba(0,0,0,0.15);
+        }
+
+        .btn-primary {
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            transform: scale(1.05);
+        }
+
+        .fade-in {
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .slide-up {
+            animation: slideUp 0.4s ease-out;
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(20px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .loading {
+            pointer-events: none;
+            opacity: 0.6;
+        }
+
+        .spinner {
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top: 3px solid white;
+            width: 20px;
+            height: 20px;
+            animation: spin 1s linear infinite;
+            display: inline-block;
+            margin-right: 8px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .modal-overlay {
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        .modal-content {
+            animation: scaleIn 0.3s ease-out;
+        }
+
+        @keyframes scaleIn {
+            from {
+                transform: scale(0.9);
+                opacity: 0;
+            }
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        input:focus, textarea:focus, select:focus {
+            outline: none;
+            ring: 2px;
+            ring-color: rgb(180, 83, 9);
+        }
+
+        .week-card {
+            transition: all 0.2s ease;
+        }
+
+        .week-card:hover {
+            background-color: rgb(254, 243, 199);
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #8B4513 0%, #A0522D 100%);
+        }
+
+        .drag-over {
+            border-color: rgb(180, 83, 9);
+            background-color: rgb(254, 243, 199);
+        }
+    </style>
+  <style>@view-transition { navigation: auto; }</style>
+ </head>
+ <body class="min-h-full">
+  <div id="app" class="min-h-full"></div><!-- Toast Container -->
+  <div id="toast-container" class="fixed top-5 left-5 z-50 space-y-2"></div>
+  <script>
+        // =====================================================
+        // CONFIGURATION & STATE
+        // =====================================================
+        
+        const defaultConfig = {
+            center_name: 'مركز الحبيب للألحان',
+            center_subtitle: 'والدراسات القبطية',
+            welcome_message: 'مرحباً بك في',
+            footer_text: 'صُنع بحب لخدمة الكنيسة',
+            background_color: '#F5F5DC',
+            surface_color: '#FFFFFF',
+            text_color: '#2C1810',
+            primary_action_color: '#8B4513',
+            secondary_action_color: '#A0522D',
+            font_family: 'Cairo',
+            font_size: 16
+        };
+
+        let currentUser = null;
+        let allRecords = [];
+        let googleConfig = {
+            scriptUrl: '',
+            driveFolderId: ''
+        };
+
+        const TOTAL_WEEKS = 15;
+        const ADMIN_USERNAME = 'admin';
+        const ADMIN_PASSWORD = 'admin123';
+
+        // =====================================================
+        // DATA SDK INITIALIZATION
+        // =====================================================
+
+        const dataHandler = {
+            onDataChanged(data) {
+                allRecords = data;
+                console.log('Data updated:', data.length, 'records');
+                
+                // تحديث الواجهة بناءً على الصفحة الحالية
+                if (currentUser) {
+                    if (currentUser.type === 'admin') {
+                        renderAdminDashboard();
+                    } else if (currentUser.type === 'teacher') {
+                        renderTeacherDashboard();
+                    } else if (currentUser.type === 'student') {
+                        renderStudentDashboard();
+                    }
+                }
+            }
+        };
+
+        async function initializeApp() {
+            const result = await window.dataSdk.init(dataHandler);
+            if (!result.isOk) {
+                console.error('Failed to initialize Data SDK');
+                showToast('فشل في تهيئة النظام', 'error');
+                return;
+            }
+
+            // تحميل إعدادات Google من localStorage
+            const savedGoogle = localStorage.getItem('googleConfig');
+            if (savedGoogle) {
+                googleConfig = JSON.parse(savedGoogle);
+            }
+
+            // تحميل الجلسة المحفوظة
+            const savedSession = localStorage.getItem('currentUser');
+            if (savedSession) {
+                currentUser = JSON.parse(savedSession);
+                if (currentUser.type === 'admin') {
+                    renderAdminDashboard();
+                } else if (currentUser.type === 'teacher') {
+                    renderTeacherDashboard();
+                } else if (currentUser.type === 'student') {
+                    renderStudentDashboard();
+                }
+            } else {
+                renderLoginPage();
+            }
+        }
+
+        // =====================================================
+        // ELEMENT SDK INITIALIZATION
+        // =====================================================
+
+        async function onConfigChange(config) {
+            document.body.style.backgroundColor = config.background_color || defaultConfig.background_color;
+            
+            const elements = document.querySelectorAll('.dynamic-text');
+            elements.forEach(el => {
+                el.style.color = config.text_color || defaultConfig.text_color;
+            });
+
+            const surfaces = document.querySelectorAll('.dynamic-surface');
+            surfaces.forEach(el => {
+                el.style.backgroundColor = config.surface_color || defaultConfig.surface_color;
+            });
+
+            const primaryButtons = document.querySelectorAll('.dynamic-primary-btn');
+            primaryButtons.forEach(el => {
+                el.style.backgroundColor = config.primary_action_color || defaultConfig.primary_action_color;
+            });
+
+            const secondaryButtons = document.querySelectorAll('.dynamic-secondary-btn');
+            secondaryButtons.forEach(el => {
+                el.style.backgroundColor = config.secondary_action_color || defaultConfig.secondary_action_color;
+            });
+
+            const baseFont = config.font_size || defaultConfig.font_size;
+            const customFont = config.font_family || defaultConfig.font_family;
+            document.body.style.fontFamily = `${customFont}, Cairo, sans-serif`;
+            document.body.style.fontSize = `${baseFont}px`;
+
+            // تحديث النصوص
+            const centerNameElements = document.querySelectorAll('.center-name');
+            centerNameElements.forEach(el => {
+                el.textContent = config.center_name || defaultConfig.center_name;
+            });
+
+            const centerSubtitleElements = document.querySelectorAll('.center-subtitle');
+            centerSubtitleElements.forEach(el => {
+                el.textContent = config.center_subtitle || defaultConfig.center_subtitle;
+            });
+
+            const welcomeElements = document.querySelectorAll('.welcome-message');
+            welcomeElements.forEach(el => {
+                el.textContent = config.welcome_message || defaultConfig.welcome_message;
+            });
+
+            const footerElements = document.querySelectorAll('.footer-text');
+            footerElements.forEach(el => {
+                el.textContent = config.footer_text || defaultConfig.footer_text;
+            });
+        }
+
+        if (window.elementSdk) {
+            window.elementSdk.init({
+                defaultConfig,
+                onConfigChange,
+                mapToCapabilities: (config) => ({
+                    recolorables: [
+                        {
+                            get: () => config.background_color || defaultConfig.background_color,
+                            set: (value) => {
+                                window.elementSdk.config.background_color = value;
+                                window.elementSdk.setConfig({ background_color: value });
+                            }
+                        },
+                        {
+                            get: () => config.surface_color || defaultConfig.surface_color,
+                            set: (value) => {
+                                window.elementSdk.config.surface_color = value;
+                                window.elementSdk.setConfig({ surface_color: value });
+                            }
+                        },
+                        {
+                            get: () => config.text_color || defaultConfig.text_color,
+                            set: (value) => {
+                                window.elementSdk.config.text_color = value;
+                                window.elementSdk.setConfig({ text_color: value });
+                            }
+                        },
+                        {
+                            get: () => config.primary_action_color || defaultConfig.primary_action_color,
+                            set: (value) => {
+                                window.elementSdk.config.primary_action_color = value;
+                                window.elementSdk.setConfig({ primary_action_color: value });
+                            }
+                        },
+                        {
+                            get: () => config.secondary_action_color || defaultConfig.secondary_action_color,
+                            set: (value) => {
+                                window.elementSdk.config.secondary_action_color = value;
+                                window.elementSdk.setConfig({ secondary_action_color: value });
+                            }
+                        }
+                    ],
+                    borderables: [],
+                    fontEditable: {
+                        get: () => config.font_family || defaultConfig.font_family,
+                        set: (value) => {
+                            window.elementSdk.config.font_family = value;
+                            window.elementSdk.setConfig({ font_family: value });
+                        }
+                    },
+                    fontSizeable: {
+                        get: () => config.font_size || defaultConfig.font_size,
+                        set: (value) => {
+                            window.elementSdk.config.font_size = value;
+                            window.elementSdk.setConfig({ font_size: value });
+                        }
+                    }
+                }),
+                mapToEditPanelValues: (config) => new Map([
+                    ["center_name", config.center_name || defaultConfig.center_name],
+                    ["center_subtitle", config.center_subtitle || defaultConfig.center_subtitle],
+                    ["welcome_message", config.welcome_message || defaultConfig.welcome_message],
+                    ["footer_text", config.footer_text || defaultConfig.footer_text]
+                ])
+            });
+        }
+
+        // =====================================================
+        // UTILITY FUNCTIONS
+        // =====================================================
+
+        function showToast(message, type = 'success') {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            
+            const bgColor = type === 'success' ? 'bg-green-500' : type === 'error' ? 'bg-red-500' : 'bg-blue-500';
+            const icon = type === 'success' ? '✓' : type === 'error' ? '✗' : 'ℹ';
+            
+            toast.className = `toast ${bgColor} text-white px-6 py-3 rounded-lg shadow-lg flex items-center gap-2`;
+            toast.innerHTML = `<span class="text-xl">${icon}</span><span>${message}</span>`;
+            
+            container.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                toast.style.transform = 'translateX(100%)';
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+
+        function generateCode(prefix) {
+            if (prefix === 'ST') {
+                // إنشاء كود بنمط DQ34ZA54 للدارسين
+                const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+                let code = '';
+                for (let i = 0; i < 8; i++) {
+                    code += chars.charAt(Math.floor(Math.random() * chars.length));
+                }
+                return code;
+            } else {
+                // للخدام: T + timestamp + random
+                const timestamp = Date.now().toString().slice(-6);
+                const random = Math.floor(Math.random() * 1000).toString().padStart(3, '0');
+                return `${prefix}${timestamp}${random}`;
+            }
+        }
+
+        function getRecordsByType(type) {
+            return allRecords.filter(r => r.type === type);
+        }
+
+        function getRecordByCode(code) {
+            return allRecords.find(r => r.code === code);
+        }
+
+        function getStudentsByTeacher(teacherId) {
+            return allRecords.filter(r => r.type === 'student' && r.teacher_id === teacherId);
+        }
+
+        function getAttendanceRecords(studentCode) {
+            return allRecords.filter(r => 
+                r.type === 'attendance' && 
+                r.code === studentCode
+            ).sort((a, b) => a.week_number - b.week_number);
+        }
+
+        function getHomeworkRecords(studentCode) {
+            return allRecords.filter(r => 
+                r.type === 'homework' && 
+                r.code === studentCode
+            ).sort((a, b) => a.week_number - b.week_number);
+        }
+
+        function calculateStats(studentCode) {
+            const attendance = getAttendanceRecords(studentCode);
+            const homework = getHomeworkRecords(studentCode);
+            
+            const presentDays = attendance.filter(a => a.present).length;
+            const submittedHomework = homework.filter(h => h.homework_status !== 'pending').length;
+            const gradedHomework = homework.filter(h => h.grade !== null && h.grade !== undefined);
+            
+            const totalGrades = gradedHomework.reduce((sum, h) => sum + (h.grade || 0), 0);
+            const average = gradedHomework.length > 0 ? Math.round(totalGrades / gradedHomework.length) : 0;
+            
+            return {
+                presentDays,
+                submittedHomework,
+                totalGrades,
+                average,
+                attendancePercentage: Math.round((presentDays / TOTAL_WEEKS) * 100)
+            };
+        }
+
+        // =====================================================
+        // GOOGLE INTEGRATION
+        // =====================================================
+
+        async function testGoogleConnection() {
+            if (!googleConfig.scriptUrl) {
+                showToast('الرجاء إدخال رابط Google Script أولاً', 'error');
+                return false;
+            }
+
+            showToast('جاري اختبار الاتصال...', 'info');
+
+            try {
+                const response = await fetch(googleConfig.scriptUrl, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ action: 'test', data: {} })
+                });
+
+                // بسبب no-cors لا يمكننا قراءة الاستجابة، لكن عدم وجود خطأ يعني النجاح
+                showToast('تم الاتصال بنجاح! ✓', 'success');
+                return true;
+            } catch (error) {
+                showToast('فشل الاتصال بـ Google Script', 'error');
+                return false;
+            }
+        }
+
+        async function syncToGoogle(record) {
+            if (!googleConfig.scriptUrl || record.synced_to_google) {
+                return;
+            }
+
+            try {
+                let action = '';
+                if (record.type === 'student') action = 'addStudent';
+                else if (record.type === 'teacher') action = 'addTeacher';
+                else if (record.type === 'attendance') action = 'saveAttendance';
+                else if (record.type === 'homework') action = 'saveHomework';
+                else return;
+
+                await fetch(googleConfig.scriptUrl, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ action, data: record })
+                });
+
+                // تحديث حالة المزامنة
+                const updateResult = await window.dataSdk.update({
+                    ...record,
+                    synced_to_google: true
+                });
+
+                if (updateResult.isOk) {
+                    console.log('Synced to Google:', record.id);
+                }
+            } catch (error) {
+                console.error('Google sync error:', error);
+            }
+        }
+
+        async function uploadFileToDrive(fileData, filename, studentCode, week) {
+            if (!googleConfig.scriptUrl || !googleConfig.driveFolderId) {
+                showToast('لم يتم تفعيل Google Drive', 'error');
+                return null;
+            }
+
+            try {
+                const response = await fetch(googleConfig.scriptUrl, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        action: 'uploadFile',
+                        data: {
+                            fileData,
+                            filename,
+                            studentCode,
+                            week,
+                            folderId: googleConfig.driveFolderId
+                        }
+                    })
+                });
+
+                // بسبب no-cors، نفترض النجاح
+                const driveUrl = `https://drive.google.com/drive/folders/${googleConfig.driveFolderId}`;
+                return driveUrl;
+            } catch (error) {
+                console.error('Drive upload error:', error);
+                return null;
+            }
+        }
+
+        // =====================================================
+        // LOGIN PAGE
+        // =====================================================
+
+        function renderLoginPage() {
+            const config = window.elementSdk?.config || defaultConfig;
+            
+            document.getElementById('app').innerHTML = `
+                <main class="min-h-full flex items-center justify-center p-4">
+                    <div class="dynamic-surface w-full max-w-md p-8 rounded-2xl shadow-2xl fade-in">
+                        <div class="text-center mb-8">
+                            <div class="text-6xl mb-4">✝️</div>
+                            <h1 class="center-name dynamic-text text-3xl font-bold mb-2">${config.center_name || defaultConfig.center_name}</h1>
+                            <p class="center-subtitle dynamic-text text-lg opacity-80">${config.center_subtitle || defaultConfig.center_subtitle}</p>
+                        </div>
+
+                        <div class="mb-6">
+                            <div class="flex gap-2 p-1 bg-amber-100 rounded-lg">
+                                <button type="button" onclick="switchLoginType('student')" id="btn-student" class="flex-1 py-2 px-4 rounded-lg font-semibold dynamic-primary-btn text-white">
+                                    👦 دارس
+                                </button>
+                                <button type="button" onclick="switchLoginType('teacher')" id="btn-teacher" class="flex-1 py-2 px-4 rounded-lg font-semibold bg-transparent dynamic-text">
+                                    🎓 خادم
+                                </button>
+                                <button type="button" onclick="switchLoginType('admin')" id="btn-admin" class="flex-1 py-2 px-4 rounded-lg font-semibold bg-transparent dynamic-text">
+                                    🛠️ مسؤول
+                                </button>
+                            </div>
+                        </div>
+
+                        <form id="login-form" onsubmit="handleLogin(event)" class="space-y-4">
+                            <div id="student-form">
+                                <label for="student-code" class="block dynamic-text font-semibold mb-2">كود الدارس</label>
+                                <input type="text" id="student-code" required
+                                    class="w-full px-4 py-3 rounded-lg border-2 border-amber-200 dynamic-text"
+                                    placeholder="مثال: ST123456">
+                            </div>
+
+                            <div id="teacher-form" class="hidden space-y-4">
+                                <div>
+                                    <label for="teacher-code" class="block dynamic-text font-semibold mb-2">كود الخادم</label>
+                                    <input type="text" id="teacher-code"
+                                        class="w-full px-4 py-3 rounded-lg border-2 border-amber-200 dynamic-text"
+                                        placeholder="مثال: T123456">
+                                </div>
+                                <div>
+                                    <label for="teacher-password" class="block dynamic-text font-semibold mb-2">كلمة المرور</label>
+                                    <input type="password" id="teacher-password"
+                                        class="w-full px-4 py-3 rounded-lg border-2 border-amber-200 dynamic-text"
+                                        placeholder="••••••••">
+                                </div>
+                            </div>
+
+                            <div id="admin-form" class="hidden space-y-4">
+                                <div>
+                                    <label for="admin-username" class="block dynamic-text font-semibold mb-2">اسم المستخدم</label>
+                                    <input type="text" id="admin-username"
+                                        class="w-full px-4 py-3 rounded-lg border-2 border-amber-200 dynamic-text"
+                                        placeholder="admin">
+                                </div>
+                                <div>
+                                    <label for="admin-password" class="block dynamic-text font-semibold mb-2">كلمة المرور</label>
+                                    <input type="password" id="admin-password"
+                                        class="w-full px-4 py-3 rounded-lg border-2 border-amber-200 dynamic-text"
+                                        placeholder="••••••••">
+                                </div>
+                            </div>
+
+                            <button type="submit" class="w-full dynamic-primary-btn text-white py-3 px-6 rounded-lg font-bold text-lg btn-primary">
+                                🔐 دخول
+                            </button>
+                        </form>
+
+                        <div class="mt-6 text-center">
+                            <p class="footer-text dynamic-text text-sm opacity-60">${config.footer_text || defaultConfig.footer_text}</p>
+                        </div>
+                    </div>
+                </main>
+            `;
+        }
+
+        function switchLoginType(type) {
+            // إخفاء جميع النماذج
+            document.getElementById('student-form').classList.add('hidden');
+            document.getElementById('teacher-form').classList.add('hidden');
+            document.getElementById('admin-form').classList.add('hidden');
+            
+            // إزالة required من جميع ����لحقول
+            const studentCode = document.getElementById('student-code');
+            const teacherCode = document.getElementById('teacher-code');
+            const teacherPassword = document.getElementById('teacher-password');
+            const adminUsername = document.getElementById('admin-username');
+            const adminPassword = document.getElementById('admin-password');
+            
+            studentCode.required = false;
+            teacherCode.required = false;
+            teacherPassword.required = false;
+            adminUsername.required = false;
+            adminPassword.required = false;
+            
+            // إعادة تعيين الأزرار
+            document.getElementById('btn-student').classList.remove('dynamic-primary-btn', 'text-white');
+            document.getElementById('btn-teacher').classList.remove('dynamic-primary-btn', 'text-white');
+            document.getElementById('btn-admin').classList.remove('dynamic-primary-btn', 'text-white');
+            
+            document.getElementById('btn-student').classList.add('bg-transparent', 'dynamic-text');
+            document.getElementById('btn-teacher').classList.add('bg-transparent', 'dynamic-text');
+            document.getElementById('btn-admin').classList.add('bg-transparent', 'dynamic-text');
+
+            // تفعيل النموذج المطلوب
+            if (type === 'student') {
+                document.getElementById('student-form').classList.remove('hidden');
+                document.getElementById('btn-student').classList.remove('bg-transparent', 'dynamic-text');
+                document.getElementById('btn-student').classList.add('dynamic-primary-btn', 'text-white');
+                studentCode.required = true;
+            } else if (type === 'teacher') {
+                document.getElementById('teacher-form').classList.remove('hidden');
+                document.getElementById('btn-teacher').classList.remove('bg-transparent', 'dynamic-text');
+                document.getElementById('btn-teacher').classList.add('dynamic-primary-btn', 'text-white');
+                teacherCode.required = true;
+                teacherPassword.required = true;
+            } else if (type === 'admin') {
+                document.getElementById('admin-form').classList.remove('hidden');
+                document.getElementById('btn-admin').classList.remove('bg-transparent', 'dynamic-text');
+                document.getElementById('btn-admin').classList.add('dynamic-primary-btn', 'text-white');
+                adminUsername.required = true;
+                adminPassword.required = true;
+            }
+        }
+
+        async function handleLogin(event) {
+            event.preventDefault();
+
+            const studentCode = document.getElementById('student-code').value;
+            const teacherCode = document.getElementById('teacher-code').value;
+            const teacherPassword = document.getElementById('teacher-password').value;
+            const adminUsername = document.getElementById('admin-username').value;
+            const adminPassword = document.getElementById('admin-password').value;
+
+            if (studentCode && !document.getElementById('student-form').classList.contains('hidden')) {
+                const student = getRecordByCode(studentCode);
+                if (student && student.type === 'student') {
+                    currentUser = student;
+                    localStorage.setItem('currentUser', JSON.stringify(currentUser));
+                    renderStudentDashboard();
+                } else {
+                    showToast('كود الدارس غير صحيح', 'error');
+                }
+            } else if (teacherCode && teacherPassword && !document.getElementById('teacher-form').classList.contains('hidden')) {
+                const teacher = getRecordByCode(teacherCode);
+                if (teacher && teacher.type === 'teacher' && teacher.password === teacherPassword) {
+                    currentUser = teacher;
+                    localStorage.setItem('currentUser', JSON.stringify(currentUser));
+                    renderTeacherDashboard();
+                } else {
+                    showToast('كود الخادم أو كلمة المرور غير صحيحة', 'error');
+                }
+            } else if (adminUsername && adminPassword && !document.getElementById('admin-form').classList.contains('hidden')) {
+                if (adminUsername === ADMIN_USERNAME && adminPassword === ADMIN_PASSWORD) {
+                    currentUser = { type: 'admin', name: 'المسؤول' };
+                    localStorage.setItem('currentUser', JSON.stringify(currentUser));
+                    renderAdminDashboard();
+                } else {
+                    showToast('اسم المستخدم أو كلمة المرور غير صحيحة', 'error');
+                }
+            }
+        }
+
+        function logout() {
+            currentUser = null;
+            localStorage.removeItem('currentUser');
+            renderLoginPage();
+            showToast('تم تسجيل الخروج بنجاح', 'success');
+        }
+
+        // =====================================================
+        // STUDENT DASHBOARD
+        // =====================================================
+
+        function renderStudentDashboard() {
+            const config = window.elementSdk?.config || defaultConfig;
+            const stats = calculateStats(currentUser.code);
+            const attendance = getAttendanceRecords(currentUser.code);
+            const homework = getHomeworkRecords(currentUser.code);
+
+            document.getElementById('app').innerHTML = `
+                <div class="min-h-full p-4">
+                    <header class="dynamic-surface rounded-2xl shadow-lg p-6 mb-6 fade-in">
+                        <div class="flex justify-between items-center">
+                            <div>
+                                <h1 class="welcome-message dynamic-text text-2xl font-bold">${config.welcome_message || defaultConfig.welcome_message}</h1>
+                                <p class="dynamic-text text-3xl font-bold mt-2">👦 ${currentUser.name}</p>
+                                <p class="dynamic-text opacity-60 mt-1">كود: ${currentUser.code}</p>
+                            </div>
+                            <button onclick="logout()" class="dynamic-secondary-btn text-white px-6 py-2 rounded-lg font-semibold btn-primary">
+                                🚪 خروج
+                            </button>
+                        </div>
+                    </header>
+
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6 slide-up">
+                        <div class="stat-card text-white p-6 rounded-xl shadow-lg">
+                            <div class="text-4xl mb-2">📅</div>
+                            <div class="text-3xl font-bold">${stats.presentDays}</div>
+                            <div class="text-sm opacity-90">أيام الحضور</div>
+                        </div>
+                        <div class="stat-card text-white p-6 rounded-xl shadow-lg">
+                            <div class="text-4xl mb-2">📝</div>
+                            <div class="text-3xl font-bold">${stats.submittedHomework}</div>
+                            <div class="text-sm opacity-90">واجبات مسلمة</div>
+                        </div>
+                        <div class="stat-card text-white p-6 rounded-xl shadow-lg">
+                            <div class="text-4xl mb-2">⭐</div>
+                            <div class="text-3xl font-bold">${stats.totalGrades}</div>
+                            <div class="text-sm opacity-90">إجمالي الدرجات</div>
+                        </div>
+                        <div class="stat-card text-white p-6 rounded-xl shadow-lg">
+                            <div class="text-4xl mb-2">📊</div>
+                            <div class="text-3xl font-bold">${stats.average}</div>
+                            <div class="text-sm opacity-90">المتوسط</div>
+                        </div>
+                    </div>
+
+                    <div class="dynamic-surface rounded-2xl shadow-lg p-6 mb-6 slide-up">
+                        <div class="flex justify-between items-center mb-4">
+                            <h2 class="dynamic-text text-2xl font-bold">📚 سجل الأسابيع</h2>
+                            <button onclick="showUploadHomework()" class="dynamic-primary-btn text-white px-6 py-2 rounded-lg font-semibold btn-primary">
+                                📤 رفع واجب
+                            </button>
+                        </div>
+                        <div class="space-y-3" id="weeks-list">
+                            ${renderWeeksList(attendance, homework)}
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderWeeksList(attendance, homework) {
+            let html = '';
+            for (let week = 1; week <= TOTAL_WEEKS; week++) {
+                const att = attendance.find(a => a.week_number === week);
+                const hw = homework.find(h => h.week_number === week);
+                
+                const present = att?.present ? '✅ حاضر' : '❌ غائب';
+                const hwStatus = hw ? 
+                    hw.homework_status === 'graded' ? `⭐ ${hw.grade}/100` :
+                    hw.homework_status === 'submitted' ? '📝 ت�� التسليم' :
+                    '⏳ معلق' : '⏳ مع��ق';
+                
+                const notes = hw?.notes ? `<p class="text-sm opacity-75 mt-1">💬 ${hw.notes}</p>` : '';
+                
+                html += `
+                    <div class="week-card border-2 border-amber-200 rounded-lg p-4">
+                        <div class="flex justify-between items-center">
+                            <div>
+                                <h3 class="dynamic-text font-bold text-lg">الأسبوع ${week}</h3>
+                                <div class="flex gap-4 mt-2">
+                                    <span class="text-sm">${present}</span>
+                                    <span class="text-sm">${hwStatus}</span>
+                                </div>
+                                ${notes}
+                            </div>
+                            ${hw?.drive_url ? `<a href="${hw.drive_url}" target="_blank" rel="noopener noreferrer" class="dynamic-secondary-btn text-white px-4 py-2 rounded-lg text-sm">📁 عرض الملف</a>` : ''}
+                        </div>
+                    </div>
+                `;
+            }
+            return html;
+        }
+
+        function showUploadHomework() {
+            const config = window.elementSdk?.config || defaultConfig;
+            
+            const modal = document.createElement('div');
+            modal.className = 'modal-overlay fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50';
+            modal.innerHTML = `
+                <div class="modal-content dynamic-surface rounded-2xl shadow-2xl p-6 max-w-lg w-full">
+                    <h2 class="dynamic-text text-2xl font-bold mb-4">📤 رفع واجب جديد</h2>
+                    <form id="upload-form" onsubmit="handleUploadHomework(event)" class="space-y-4">
+                        <div>
+                            <label class="block dynamic-text font-semibold mb-2">اختر الأسبوع</label>
+                            <select id="week-select" required class="w-full px-4 py-3 rounded-lg border-2 border-amber-200 dynamic-text">
+                                ${Array.from({length: TOTAL_WEEKS}, (_, i) => `<option value="${i+1}">الأسبوع ${i+1}</option>`).join('')}
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block dynamic-text font-semibold mb-2">نص الواجب (اختياري)</label>
+                            <textarea id="homework-text" rows="4" class="w-full px-4 py-3 rounded-lg border-2 border-amber-200 dynamic-text" placeholder="اكتب نص الواجب هنا..."></textarea>
+                        </div>
+                        <div>
+                            <label class="block dynamic-text font-semibold mb-2">رفع ملف (اختياري)</label>
+                            <div id="drop-zone" class="border-2 border-dashed border-amber-300 rounded-lg p-8 text-center cursor-pointer hover:bg-amber-50">
+                                <div class="text-4xl mb-2">📁</div>
+                                <p class="dynamic-text">اسحب وأفلت الملف هنا أو اضغط للاختيار</p>
+                                <p class="text-sm opacity-60 mt-2">PDF, Word, Audio (MP3, M4A, WAV)</p>
+                                <input type="file" id="file-input" class="hidden" accept=".pdf,.doc,.docx,.mp3,.m4a,.wav">
+                            </div>
+                            <p id="file-name" class="text-sm mt-2 dynamic-text"></p>
+                        </div>
+                        <div class="flex gap-3">
+                            <button type="submit" class="flex-1 dynamic-primary-btn text-white py-3 px-6 rounded-lg font-bold btn-primary">
+                                📤 إرسال الواجب
+                            </button>
+                            <button type="button" onclick="this.closest('.modal-overlay').remove()" class="flex-1 bg-gray-400 text-white py-3 px-6 rounded-lg font-bold btn-primary">
+                                ❌ إلغاء
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            `;
+            
+            document.body.appendChild(modal);
+            
+            // Setup drag and drop
+            const dropZone = document.getElementById('drop-zone');
+            const fileInput = document.getElementById('file-input');
+            
+            dropZone.onclick = () => fileInput.click();
+            
+            dropZone.ondragover = (e) => {
+                e.preventDefault();
+                dropZone.classList.add('drag-over');
+            };
+            
+            dropZone.ondragleave = () => {
+                dropZone.classList.remove('drag-over');
+            };
+            
+            dropZone.ondrop = (e) => {
+                e.preventDefault();
+                dropZone.classList.remove('drag-over');
+                const files = e.dataTransfer.files;
+                if (files.length > 0) {
+                    fileInput.files = files;
+                    document.getElementById('file-name').textContent = `📎 ${files[0].name}`;
+                }
+            };
+            
+            fileInput.onchange = (e) => {
+                if (e.target.files.length > 0) {
+                    document.getElementById('file-name').textContent = `📎 ${e.target.files[0].name}`;
+                }
+            };
+        }
+
+        async function handleUploadHomework(event) {
+            event.preventDefault();
+            
+            const submitBtn = event.target.querySelector('button[type="submit"]');
+            submitBtn.disabled = true;
+            submitBtn.classList.add('loading');
+            submitBtn.innerHTML = '<span class="spinner"></span>جاري الرفع...';
+
+            const week = parseInt(document.getElementById('week-select').value);
+            const text = document.getElementById('homework-text').value;
+            const fileInput = document.getElementById('file-input');
+            
+            let driveUrl = null;
+            let fileName = null;
+            
+            if (fileInput.files.length > 0) {
+                const file = fileInput.files[0];
+                fileName = file.name;
+                
+                // تحويل الملف إلى Base64
+                const reader = new FileReader();
+                const fileData = await new Promise((resolve) => {
+                    reader.onload = () => resolve(reader.result.split(',')[1]);
+                    reader.readAsDataURL(file);
+                });
+                
+                // رفع إلى Drive إذا كان مفعلاً
+                if (googleConfig.scriptUrl && googleConfig.driveFolderId) {
+                    driveUrl = await uploadFileToDrive(fileData, fileName, currentUser.code, week);
+                }
+            }
+
+            // حفظ الواجب
+            const homeworkId = `hw_${currentUser.code}_${week}`;
+            const existingHomework = allRecords.find(r => r.id === homeworkId);
+
+            const homeworkData = {
+                id: homeworkId,
+                type: 'homework',
+                code: currentUser.code,
+                week_number: week,
+                homework_text: text,
+                homework_file: fileName,
+                homework_status: 'submitted',
+                drive_url: driveUrl,
+                grade: null,
+                notes: '',
+                synced_to_google: false,
+                created_at: new Date().toISOString()
+            };
+
+            let result;
+            if (existingHomework) {
+                result = await window.dataSdk.update({
+                    ...existingHomework,
+                    ...homeworkData
+                });
+            } else {
+                result = await window.dataSdk.create(homeworkData);
+            }
+
+            if (result.isOk) {
+                showToast('تم رفع الواجب بنجاح! ✓', 'success');
+                document.querySelector('.modal-overlay').remove();
+                
+                // مزامنة مع Google
+                if (googleConfig.scriptUrl) {
+                    syncToGoogle(homeworkData);
+                }
+            } else {
+                showToast('فشل في رفع الواجب', 'error');
+                submitBtn.disabled = false;
+                submitBtn.classList.remove('loading');
+                submitBtn.innerHTML = '📤 إرسال الو��جب';
+            }
+        }
+
+        // =====================================================
+        // TEACHER DASHBOARD
+        // =====================================================
+
+        function renderTeacherDashboard() {
+            const config = window.elementSdk?.config || defaultConfig;
+            const myStudents = getStudentsByTeacher(currentUser.id);
+            const presentToday = myStudents.filter(s => {
+                const lastWeek = getAttendanceRecords(s.code).pop();
+                return lastWeek?.present;
+            }).length;
+            const pendingHomework = allRecords.filter(r => 
+                r.type === 'homework' && 
+                r.homework_status === 'submitted' &&
+                myStudents.some(s => s.code === r.code)
+            ).length;
+
+            document.getElementById('app').innerHTML = `
+                <div class="min-h-full p-4">
+                    <header class="dynamic-surface rounded-2xl shadow-lg p-6 mb-6 fade-in">
+                        <div class="flex justify-between items-center flex-wrap gap-4">
+                            <div>
+                                <h1 class="dynamic-text text-2xl font-bold">🎓 لوحة الخادم</h1>
+                                <p class="dynamic-text text-3xl font-bold mt-2">${currentUser.name}</p>
+                                <p class="dynamic-text opacity-60 mt-1">كود: ${currentUser.code}</p>
+                            </div>
+                            <button onclick="logout()" class="dynamic-secondary-btn text-white px-6 py-2 rounded-lg font-semibold btn-primary">
+                                🚪 خروج
+                            </button>
+                        </div>
+                    </header>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6 slide-up">
+                        <div class="stat-card text-white p-6 rounded-xl shadow-lg">
+                            <div class="text-4xl mb-2">��</div>
+                            <div class="text-3xl font-bold">${myStudents.length}</div>
+                            <div class="text-sm opacity-90">عدد الدارسين</div>
+                        </div>
+                        <div class="stat-card text-white p-6 rounded-xl shadow-lg">
+                            <div class="text-4xl mb-2">✅</div>
+                            <div class="text-3xl font-bold">${presentToday}</div>
+                            <div class="text-sm opacity-90">الحاضرون</div>
+                        </div>
+                        <div class="stat-card text-white p-6 rounded-xl shadow-lg">
+                            <div class="text-4xl mb-2">⏳</div>
+                            <div class="text-3xl font-bold">${pendingHomework}</div>
+                            <div class="text-sm opacity-90">واجبات معلقة</div>
+                        </div>
+                    </div>
+
+                    <div class="grid md:grid-cols-2 gap-6 mb-6 slide-up">
+                        <button onclick="showAttendanceForm()" class="dynamic-surface p-8 rounded-2xl shadow-lg hover:shadow-xl card-hover">
+                            <div class="text-5xl mb-3">📋</div>
+                            <h3 class="dynamic-text text-2xl font-bold">تسجيل الحضور</h3>
+                            <p class="dynamic-text opacity-60 mt-2">تسجيل حضور وغياب الدارسين</p>
+                        </button>
+                        <button onclick="showGradingForm()" class="dynamic-surface p-8 rounded-2xl shadow-lg hover:shadow-xl card-hover">
+                            <div class="text-5xl mb-3">⭐</div>
+                            <h3 class="dynamic-text text-2xl font-bold">تقييم الواجبات</h3>
+                            <p class="dynamic-text opacity-60 mt-2">تقييم ووضع درجات الواجبات</p>
+                        </button>
+                    </div>
+
+                    <div class="dynamic-surface rounded-2xl shadow-lg p-6 slide-up">
+                        <h2 class="dynamic-text text-2xl font-bold mb-4">👥 قائمة الدارسين</h2>
+                        <div class="space-y-3">
+                            ${myStudents.map(student => {
+                                const stats = calculateStats(student.code);
+                                return `
+                                    <div class="border-2 border-amber-200 rounded-lg p-4">
+                                        <div class="flex justify-between items-center">
+                                            <div>
+                                                <h3 class="dynamic-text font-bold text-lg">${student.name}</h3>
+                                                <p class="text-sm opacity-75">كود: ${student.code} | الفصل: ${student.class_name}</p>
+                                                <div class="flex gap-4 mt-2 text-sm">
+                                                    <span>📅 ${stats.presentDays} يوم حضور</span>
+                                                    <span>📝 ${stats.submittedHomework} واجب</span>
+                                                    <span>⭐ متوسط: ${stats.average}</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                `;
+                            }).join('')}
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function showAttendanceForm() {
+            const myStudents = getStudentsByTeacher(currentUser.id);
+            
+            const modal = document.createElement('div');
+            modal.className = 'modal-overlay fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50';
+            modal.innerHTML = `
+                <div class="modal-content dynamic-surface rounded-2xl shadow-2xl p-6 max-w-2xl w-full max-h-[90%] overflow-y-auto">
+                    <h2 class="dynamic-text text-2xl font-bold mb-4">📋 تسجيل الحضور</h2>
+                    <form id="attendance-form" onsubmit="handleAttendance(event)" class="space-y-4">
+                        <div>
+                            <label class="block dynamic-text font-semibold mb-2">اختر الأسبوع</label>
+                            <select id="att-week-select" required class="w-full px-4 py-3 rounded-lg border-2 border-amber-200 dynamic-text">
+                                ${Array.from({length: TOTAL_WEEKS}, (_, i) => `<option value="${i+1}">الأسبوع ${i+1}</option>`).join('')}
+                            </select>
+                        </div>
+                        <div class="space-y-2">
+                            ${myStudents.map(student => `
+                                <div class="flex items-center gap-3 p-3 border-2 border-amber-200 rounded-lg">
+                                    <input type="checkbox" id="att-${student.code}" value="${student.code}" 
+                                        class="w-5 h-5 rounded">
+                                    <label for="att-${student.code}" class="flex-1 dynamic-text font-semibold">
+                                        ${student.name} (${student.code})
+                                    </label>
+                                </div>
+                            `).join('')}
+                        </div>
+                        <div class="flex gap-3">
+                            <button type="submit" class="flex-1 dynamic-primary-btn text-white py-3 px-6 rounded-lg font-bold btn-primary">
+                                💾 حفظ الحضور
+                            </button>
+                            <button type="button" onclick="this.closest('.modal-overlay').remove()" class="flex-1 bg-gray-400 text-white py-3 px-6 rounded-lg font-bold btn-primary">
+                                ❌ إلغاء
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            `;
+            
+            document.body.appendChild(modal);
+        }
+
+        async function handleAttendance(event) {
+            event.preventDefault();
+            
+            const submitBtn = event.target.querySelector('button[type="submit"]');
+            submitBtn.disabled = true;
+            submitBtn.classList.add('loading');
+            submitBtn.innerHTML = '<span class="spinner"></span>جاري الحفظ...';
+
+            const week = parseInt(document.getElementById('att-week-select').value);
+            const myStudents = getStudentsByTeacher(currentUser.id);
+            
+            let successCount = 0;
+            
+            for (const student of myStudents) {
+                const checkbox = document.getElementById(`att-${student.code}`);
+                const present = checkbox.checked;
+                
+                const attId = `att_${student.code}_${week}`;
+                const existing = allRecords.find(r => r.id === attId);
+                
+                const attData = {
+                    id: attId,
+                    type: 'attendance',
+                    code: student.code,
+                    week_number: week,
+                    present: present,
+                    synced_to_google: false,
+                    created_at: new Date().toISOString()
+                };
+                
+                let result;
+                if (existing) {
+                    result = await window.dataSdk.update({
+                        ...existing,
+                        ...attData
+                    });
+                } else {
+                    result = await window.dataSdk.create(attData);
+                }
+                
+                if (result.isOk) {
+                    successCount++;
+                    if (googleConfig.scriptUrl) {
+                        syncToGoogle(attData);
+                    }
+                }
+            }
+            
+            if (successCount > 0) {
+                showToast(`تم حفظ حضور ${successCount} دارس بنجاح! ✓`, 'success');
+                document.querySelector('.modal-overlay').remove();
+            } else {
+                showToast('فشل في حفظ الحضور', 'error');
+                submitBtn.disabled = false;
+                submitBtn.classList.remove('loading');
+                submitBtn.innerHTML = '💾 حفظ الحضور';
+            }
+        }
+
+        function showGradingForm() {
+            const myStudents = getStudentsByTeacher(currentUser.id);
+            
+            const modal = document.createElement('div');
+            modal.className = 'modal-overlay fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50';
+            modal.innerHTML = `
+                <div class="modal-content dynamic-surface rounded-2xl shadow-2xl p-6 max-w-4xl w-full max-h-[90%] overflow-y-auto">
+                    <h2 class="dynamic-text text-2xl font-bold mb-4">⭐ تقييم الواجبات</h2>
+                    <div class="mb-4">
+                        <label class="block dynamic-text font-semibold mb-2">اختر الأسبوع</label>
+                        <select id="grade-week-select" onchange="loadHomeworkForWeek()" class="w-full px-4 py-3 rounded-lg border-2 border-amber-200 dynamic-text">
+                            ${Array.from({length: TOTAL_WEEKS}, (_, i) => `<option value="${i+1}">الأسبوع ${i+1}</option>`).join('')}
+                        </select>
+                    </div>
+                    <div id="homework-list" class="space-y-4"></div>
+                    <div class="mt-4 flex gap-3">
+                        <button onclick="saveAllGrades()" class="flex-1 dynamic-primary-btn text-white py-3 px-6 rounded-lg font-bold btn-primary">
+                            💾 حفظ جميع التقييمات
+                        </button>
+                        <button onclick="document.querySelector('.modal-overlay').remove()" class="flex-1 bg-gray-400 text-white py-3 px-6 rounded-lg font-bold btn-primary">
+                            ❌ إغلاق
+                        </button>
+                    </div>
+                </div>
+            `;
+            
+            document.body.appendChild(modal);
+            loadHomeworkForWeek();
+        }
+
+        function loadHomeworkForWeek() {
+            const week = parseInt(document.getElementById('grade-week-select').value);
+            const myStudents = getStudentsByTeacher(currentUser.id);
+            const container = document.getElementById('homework-list');
+            
+            let html = '';
+            
+            for (const student of myStudents) {
+                const homework = allRecords.find(r => 
+                    r.type === 'homework' && 
+                    r.code === student.code && 
+                    r.week_number === week
+                );
+                
+                const hasHomework = homework && homework.homework_status !== 'pending';
+                const grade = homework?.grade || '';
+                const notes = homework?.notes || '';
+                const text = homework?.homework_text || 'لا يوجد نص';
+                const file = homework?.homework_file || 'لا يوجد ملف';
+                const driveUrl = homework?.drive_url || '';
+                
+                html += `
+                    <div class="border-2 border-amber-200 rounded-lg p-4 ${!hasHomework ? 'opacity-50' : ''}">
+                        <h3 class="dynamic-text font-bold text-lg mb-2">${student.name} (${student.code})</h3>
+                        ${hasHomework ? `
+                            <div class="mb-3 p-3 bg-amber-50 rounded-lg">
+                                <p class="text-sm font-semibold mb-1">📝 نص الواجب:</p>
+                                <p class="text-sm">${text}</p>
+                                <p class="text-sm font-semibold mt-2 mb-1">📎 الملف:</p>
+                                <p class="text-sm">${file}</p>
+                                ${driveUrl ? `<a href="${driveUrl}" target="_blank" rel="noopener noreferrer" class="text-sm text-blue-600 underline">🔗 فتح في Drive</a>` : ''}
+                            </div>
+                            <div class="grid md:grid-cols-2 gap-3">
+                                <div>
+                                    <label class="block text-sm font-semibold mb-1">الدرجة (من 100)</label>
+                                    <input type="number" id="grade-${student.code}" value="${grade}" min="0" max="100"
+                                        class="w-full px-3 py-2 rounded-lg border-2 border-amber-200">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-semibold mb-1">ملاحظات</label>
+                                    <input type="text" id="notes-${student.code}" value="${notes}" placeholder="ممتاز، جيد، الخ..."
+                                        class="w-full px-3 py-2 rounded-lg border-2 border-amber-200">
+                                </div>
+                            </div>
+                        ` : `
+                            <p class="text-sm opacity-60">لم يتم تسليم واجب لهذا الأسبوع</p>
+                        `}
+                    </div>
+                `;
+            }
+            
+            container.innerHTML = html || '<p class="text-center opacity-60">لا توجد واجبات لهذا الأسبوع</p>';
+        }
+
+        async function saveAllGrades() {
+            const week = parseInt(document.getElementById('grade-week-select').value);
+            const myStudents = getStudentsByTeacher(currentUser.id);
+            
+            const saveBtn = event.target;
+            saveBtn.disabled = true;
+            saveBtn.classList.add('loading');
+            saveBtn.innerHTML = '<span class="spinner"></span>جاري الحفظ...';
+            
+            let successCount = 0;
+            
+            for (const student of myStudents) {
+                const gradeInput = document.getElementById(`grade-${student.code}`);
+                const notesInput = document.getElementById(`notes-${student.code}`);
+                
+                if (!gradeInput || !notesInput) continue;
+                
+                const grade = parseInt(gradeInput.value) || null;
+                const notes = notesInput.value;
+                
+                const homeworkId = `hw_${student.code}_${week}`;
+                const existing = allRecords.find(r => r.id === homeworkId);
+                
+                if (existing && grade !== null) {
+                    const result = await window.dataSdk.update({
+                        ...existing,
+                        grade: grade,
+                        notes: notes,
+                        homework_status: 'graded',
+                        synced_to_google: false
+                    });
+                    
+                    if (result.isOk) {
+                        successCount++;
+                        if (googleConfig.scriptUrl) {
+                            syncToGoogle({...existing, grade, notes, homework_status: 'graded'});
+                        }
+                    }
+                }
+            }
+            
+            if (successCount > 0) {
+                showToast(`تم حفظ ${successCount} تقييم بنجاح! ✓`, 'success');
+                loadHomeworkForWeek(); // إعادة تحميل القائمة
+            } else {
+                showToast('لا توجد تقييمات للحفظ', 'info');
+            }
+            
+            saveBtn.disabled = false;
+            saveBtn.classList.remove('loading');
+            saveBtn.innerHTML = '💾 حفظ جميع التقييمات';
+        }
+
+        // =====================================================
+        // ADMIN DASHBOARD
+        // =====================================================
+
+        function renderAdminDashboard() {
+            const config = window.elementSdk?.config || defaultConfig;
+            const students = getRecordsByType('student');
+            const teachers = getRecordsByType('teacher');
+            const classes = [...new Set(students.map(s => s.class_name))];
+            
+            const totalAttendance = allRecords.filter(r => r.type === 'attendance' && r.present).length;
+            const totalPossible = students.length * TOTAL_WEEKS;
+            const attendancePercentage = totalPossible > 0 ? Math.round((totalAttendance / totalPossible) * 100) : 0;
+            
+            const pendingHomework = allRecords.filter(r => 
+                r.type === 'homework' && 
+                r.homework_status === 'submitted'
+            ).length;
+
+            document.getElementById('app').innerHTML = `
+                <div class="min-h-full p-4">
+                    <header class="dynamic-surface rounded-2xl shadow-lg p-6 mb-6 fade-in">
+                        <div class="flex justify-between items-center flex-wrap gap-4">
+                            <div>
+                                <h1 class="dynamic-text text-2xl font-bold">🛠️ لوحة المسؤول</h1>
+                                <p class="center-name dynamic-text text-3xl font-bold mt-2">${config.center_name || defaultConfig.center_name}</p>
+                            </div>
+                            <div class="flex gap-3">
+                                <button onclick="showGoogleSettings()" class="dynamic-secondary-btn text-white px-6 py-2 rounded-lg font-semibold btn-primary">
+                                    🔗 إعدادات Google
+                                </button>
+                                <button onclick="logout()" class="dynamic-secondary-btn text-white px-6 py-2 rounded-lg font-semibold btn-primary">
+                                    🚪 خروج
+                                </button>
+                            </div>
+                        </div>
+                    </header>
+
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6 slide-up">
+                        <div class="stat-card text-white p-6 rounded-xl shadow-lg">
+                            <div class="text-4xl mb-2">👥</div>
+                            <div class="text-3xl font-bold">${students.length}</div>
+                            <div class="text-sm opacity-90">إجمالي الدارسين</div>
+                        </div>
+                        <div class="stat-card text-white p-6 rounded-xl shadow-lg">
+                            <div class="text-4xl mb-2">🎓</div>
+                            <div class="text-3xl font-bold">${teachers.length}</div>
+                            <div class="text-sm opacity-90">إجمالي الخدام</div>
+                        </div>
+                        <div class="stat-card text-white p-6 rounded-xl shadow-lg">
+                            <div class="text-4xl mb-2">📚</div>
+                            <div class="text-3xl font-bold">${classes.length}</div>
+                            <div class="text-sm opacity-90">الفصول ا��دراسية</div>
+                        </div>
+                        <div class="stat-card text-white p-6 rounded-xl shadow-lg">
+                            <div class="text-4xl mb-2">📊</div>
+                            <div class="text-3xl font-bold">${attendancePercentage}%</div>
+                            <div class="text-sm opacity-90">نسبة الحضور</div>
+                        </div>
+                    </div>
+
+                    <div class="grid md:grid-cols-2 gap-6 mb-6 slide-up">
+                        <button onclick="showAddTeacher()" class="dynamic-surface p-8 rounded-2xl shadow-lg hover:shadow-xl card-hover">
+                            <div class="text-5xl mb-3">🎓</div>
+                            <h3 class="dynamic-text text-2xl font-bold">إضافة خادم جديد</h3>
+                            <p class="dynamic-text opacity-60 mt-2">إضافة خادم للنظام</p>
+                        </button>
+                        <button onclick="showAddStudent()" class="dynamic-surface p-8 rounded-2xl shadow-lg hover:shadow-xl card-hover">
+                            <div class="text-5xl mb-3">👦</div>
+                            <h3 class="dynamic-text text-2xl font-bold">إضافة دارس جديد</h3>
+                            <p class="dynamic-text opacity-60 mt-2">إضافة دارس للنظام</p>
+                        </button>
+                    </div>
+
+                    <div class="dynamic-surface rounded-2xl shadow-lg p-6 mb-6 slide-up">
+                        <h2 class="dynamic-text text-2xl font-bold mb-4">💾 إدارة البيانات</h2>
+                        <div class="grid md:grid-cols-3 gap-3">
+                            <button onclick="exportDataAsJSON()" class="dynamic-primary-btn text-white py-3 px-6 rounded-lg font-semibold btn-primary">
+                                📥 تنزيل JSON
+                            </button>
+                            <button onclick="exportDataAsExcel()" class="dynamic-primary-btn text-white py-3 px-6 rounded-lg font-semibold btn-primary">
+                                📊 تنزيل Excel
+                            </button>
+                            <button onclick="importData()" class="bg-green-600 text-white py-3 px-6 rounded-lg font-semibold btn-primary">
+                                📤 استعادة البيانات
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="dynamic-surface rounded-2xl shadow-lg p-6 mb-6 slide-up">
+                        <h2 class="dynamic-text text-2xl font-bold mb-4">⚠️ إدارة خطرة</h2>
+                        <div class="grid md:grid-cols-2 gap-3">
+                            <button onclick="confirmClearStudents()" class="bg-red-600 text-white py-3 px-6 rounded-lg font-semibold btn-primary">
+                                🗑️ تهيئة بيانات الدارسين
+                            </button>
+                            <button onclick="confirmClearTeachers()" class="bg-red-600 text-white py-3 px-6 rounded-lg font-semibold btn-primary">
+                                🗑️ تهيئة بيانات الخدام
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="grid md:grid-cols-2 gap-6 slide-up">
+                        <div class="dynamic-surface rounded-2xl shadow-lg p-6">
+                            <h2 class="dynamic-text text-2xl font-bold mb-4">🎓 قائمة الخدام</h2>
+                            <div class="space-y-3">
+                                ${teachers.map(teacher => {
+                                    const studentCount = getStudentsByTeacher(teacher.id).length;
+                                    return `
+                                        <div class="border-2 border-amber-200 rounded-lg p-4">
+                                            <div class="flex justify-between items-center">
+                                                <div>
+                                                    <h3 class="dynamic-text font-bold">${teacher.name}</h3>
+                                                    <p class="text-sm opacity-75">كود: ${teacher.code}</p>
+                                                    <p class="text-sm opacity-75">📱 ${teacher.phone}</p>
+                                                    <p class="text-sm mt-1">👥 ${studentCount} دارس</p>
+                                                </div>
+                                                <button onclick="confirmDelete('${teacher.id}', 'teacher', '${teacher.name}')" 
+                                                    class="bg-red-500 text-white px-4 py-2 rounded-lg text-sm btn-primary">
+                                                    🗑️ حذف
+                                                </button>
+                                            </div>
+                                        </div>
+                                    `;
+                                }).join('') || '<p class="text-center opacity-60">لا يوجد خدام بعد</p>'}
+                            </div>
+                        </div>
+
+                        <div class="dynamic-surface rounded-2xl shadow-lg p-6">
+                            <h2 class="dynamic-text text-2xl font-bold mb-4">👥 قائمة الدارسين</h2>
+                            <div class="space-y-3">
+                                ${students.map(student => {
+                                    const teacher = allRecords.find(r => r.id === student.teacher_id);
+                                    const stats = calculateStats(student.code);
+                                    return `
+                                        <div class="border-2 border-amber-200 rounded-lg p-4">
+                                            <div class="flex justify-between items-start gap-3">
+                                                <div class="flex-1">
+                                                    <div class="flex items-center gap-2 mb-2">
+                                                        <h3 class="dynamic-text font-bold text-lg">${student.name}</h3>
+                                                        <span class="text-xs px-2 py-1 rounded ${student.student_type === 'دارس جديد' ? 'bg-green-100 text-green-700' : 'bg-blue-100 text-blue-700'}">${student.student_type || 'دارس جديد'}</span>
+                                                    </div>
+                                                    <div class="grid md:grid-cols-2 gap-x-4 gap-y-1 text-sm opacity-75 mb-2">
+                                                        <p>🆔 كود: ${student.code}</p>
+                                                        <p>👤 ${student.gender || '-'}</p>
+                                                        <p>📚 ${student.grade || student.class_name || '-'}</p>
+                                                        <p>🔤 فصل: ${student.class_letter || '-'} - ${student.center_class || '-'}</p>
+                                                        <p>📱 ${student.phone1 || student.phone || '-'}</p>
+                                                        <p>📱2 ${student.phone2 || '-'}</p>
+                                                        <p>🎓 الخادم: ${teacher?.name || 'غير م��دد'}</p>
+                                                        <p>⛪ ${student.rank || '-'}</p>
+                                                    </div>
+                                                    <div class="flex gap-3 text-sm">
+                                                        <span>📅 ${stats.presentDays} حضور</span>
+                                                        <span>📝 ${stats.submittedHomework} واجب</span>
+                                                        <span>⭐ ${stats.average} متوسط</span>
+                                                    </div>
+                                                    <div class="flex gap-2 mt-2 text-xs">
+                                                        ${student.form_submitted ? '<span class="px-2 py-1 bg-green-100 text-green-700 rounded">✓ استمارة</span>' : ''}
+                                                        ${student.photo_submitted ? '<span class="px-2 py-1 bg-green-100 text-green-700 rounded">✓ صورة</span>' : ''}
+                                                        ${student.fees_paid ? '<span class="px-2 py-1 bg-green-100 text-green-700 rounded">✓ دفع</span>' : ''}
+                                                    </div>
+                                                </div>
+                                                <button onclick="confirmDelete('${student.id}', 'student', '${student.name}')" 
+                                                    class="bg-red-500 text-white px-3 py-2 rounded-lg text-sm btn-primary whitespace-nowrap">
+                                                    🗑️ حذف
+                                                </button>
+                                            </div>
+                                        </div>
+                                    `;
+                                }).join('') || '<p class="text-center opacity-60">لا يوجد دارسون بعد</p>'}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function showAddTeacher() {
+            const modal = document.createElement('div');
+            modal.className = 'modal-overlay fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50';
+            modal.innerHTML = `
+                <div class="modal-content dynamic-surface rounded-2xl shadow-2xl p-6 max-w-2xl w-full">
+                    <h2 class="dynamic-text text-2xl font-bold mb-4">➕ إضافة خادم جديد</h2>
+                    <form id="teacher-form" onsubmit="handleAddTeacher(event)" class="space-y-4">
+                        <div class="grid md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block dynamic-text font-semibold mb-2">كود الخادم</label>
+                                <input type="text" id="teacher-code" readonly
+                                    class="w-full px-4 py-3 rounded-lg border-2 border-amber-200 dynamic-text bg-gray-100"
+                                    value="سيتم إنشاؤه تلقائياً">
+                            </div>
+                            <div>
+                                <label class="block dynamic-text font-semibold mb-2">اسم الخادم *</label>
+                                <input type="text" id="teacher-name" required
+                                    class="w-full px-4 py-3 rounded-lg border-2 border-amber-200 dynamic-text"
+                                    placeholder="مثال: كريستين كمال">
+                            </div>
+                        </div>
+                        
+                        <div class="grid md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block dynamic-text font-semibold mb-2">رقم الهاتف *</label>
+                                <input type="tel" id="teacher-phone" required
+                                    class="w-full px-4 py-3 rounded-lg border-2 border-amber-200 dynamic-text"
+                                    placeholder="01234567890">
+                            </div>
+                            <div>
+                                <label class="block dynamic-text font-semibold mb-2">التخصص *</label>
+                                <select id="teacher-specialty" required class="w-full px-4 py-3 rounded-lg border-2 border-amber-200 dynamic-text">
+                                    <option value="">-- اختر التخصص --</option>
+                                    <option value="دراسي - طقوس">دراسي - طقوس</option>
+                                    <option value="دراسي فقط">دراسي فقط</option>
+                                    <option value="طقوس فقط">طقوس فقط</option>
+                                    <option value="إداري">إداري</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="grid md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="flex items-center gap-2 cursor-pointer p-4 border-2 border-amber-200 rounded-lg">
+                                    <input type="checkbox" id="teacher-admin" class="w-5 h-5 rounded">
+                                    <span class="dynamic-text font-semibold">مسؤول إداري</span>
+                                </label>
+                            </div>
+                            <div>
+                                <label class="block dynamic-text font-semibold mb-2">كلمة المرور *</label>
+                                <input type="password" id="teacher-pwd" required
+                                    class="w-full px-4 py-3 rounded-lg border-2 border-amber-200 dynamic-text"
+                                    placeholder="كلمة مرور قوية">
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block dynamic-text font-semibold mb-2">الفصل داخل المركز *</label>
+                            <select id="teacher-class" required class="w-full px-4 py-3 rounded-lg border-2 border-amber-200 dynamic-text">
+                                <option value="">-- اختر الفصل --</option>
+                                <option value="تمهيدي">تمهيدي</option>
+                                <option value="أولي وثانية">أولي وثانية</option>
+                                <option value="ثالثة ورابعة">ثالثة ورابعة</option>
+                                <option value="خامسة وسادسة">خامسة وسادسة</option>
+                                <option value="أعدادي - ثانوي">أعدادي - ثانوي</option>
+                                <option value="شباب وخريجين">شباب وخريجين</option>
+                            </select>
+                        </div>
+
+                        <div class="flex gap-3">
+                            <button type="submit" class="flex-1 dynamic-primary-btn text-white py-3 px-6 rounded-lg font-bold btn-primary">
+                                ➕ إضافة الخادم
+                            </button>
+                            <button type="button" onclick="this.closest('.modal-overlay').remove()" 
+                                class="flex-1 bg-gray-400 text-white py-3 px-6 rounded-lg font-bold btn-primary">
+                                ❌ إلغاء
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            `;
+            document.body.appendChild(modal);
+        }
+
+        async function handleAddTeacher(event) {
+            event.preventDefault();
+            
+            const submitBtn = event.target.querySelector('button[type="submit"]');
+            submitBtn.disabled = true;
+            submitBtn.classList.add('loading');
+            submitBtn.innerHTML = '<span class="spinner"></span>جاري الإضافة...';
+
+            const name = document.getElementById('teacher-name').value;
+            const phone = document.getElementById('teacher-phone').value;
+            const specialty = document.getElementById('teacher-specialty').value;
+            const isAdmin = document.getElementById('teacher-admin').checked;
+            const password = document.getElementById('teacher-pwd').value;
+            const centerClass = document.getElementById('teacher-class').value;
+            
+            const teacherData = {
+                id: 'teacher_' + Date.now(),
+                type: 'teacher',
+                name: name,
+                code: generateCode('ST'),
+                phone: phone,
+                specialty: specialty,
+                is_admin: isAdmin,
+                password: password,
+                center_class: centerClass,
+                synced_to_google: false,
+                created_at: new Date().toISOString()
+            };
+
+            const result = await window.dataSdk.create(teacherData);
+
+            if (result.isOk) {
+                showToast(`تم إضافة الخادم بنجاح! الكود: ${teacherData.code}`, 'success');
+                document.querySelector('.modal-overlay').remove();
+                
+                if (googleConfig.scriptUrl) {
+                    syncToGoogle(teacherData);
+                }
+            } else {
+                showToast('فشل في إضافة الخادم', 'error');
+                submitBtn.disabled = false;
+                submitBtn.classList.remove('loading');
+                submitBtn.innerHTML = '➕ إضافة الخادم';
+            }
+        }
+
+        function showAddStudent() {
+            const teachers = getRecordsByType('teacher');
+            
+            const modal = document.createElement('div');
+            modal.className = 'modal-overlay fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50';
+            modal.innerHTML = `
+                <div class="modal-content dynamic-surface rounded-2xl shadow-2xl p-6 max-w-4xl w-full max-h-[90%] overflow-y-auto">
+                    <h2 class="dynamic-text text-2xl font-bold mb-4">➕ إضافة دارس جديد</h2>
+                    <form id="student-form" onsubmit="handleAddStudent(event)" class="space-y-4">
+                        <div class="grid md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block dynamic-text font-semibold mb-2">نوع الدارس *</label>
+                                <select id="student-type" required class="w-full px-4 py-3 rounded-lg border-2 border-amber-200 dynamic-text">
+                                    <option value="دار�� جديد">دارس جديد</option>
+                                    <option value="دارس قديم">دارس قديم</option>
+                                </select>
+                            </div>
+                            
+                            <div>
+                                <label class="block dynamic-text font-semibold mb-2">كود الدارس</label>
+                                <input type="text" id="student-code" readonly
+                                    class="w-full px-4 py-3 rounded-lg border-2 border-amber-200 dynamic-text bg-gray-100"
+                                    value="سيتم إنشاؤه تلقائياً">
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block dynamic-text font-semibold mb-2">اسم الدارس بالكامل *</label>
+                            <input type="text" id="student-name" required
+                                class="w-full px-4 py-3 rounded-lg border-2 border-amber-200 dynamic-text"
+                                placeholder="مثال: كارن ميخائيل فؤاد">
+                        </div>
+
+                        <div class="grid md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block dynamic-text font-semibold mb-2">النوع *</label>
+                                <select id="student-gender" required class="w-full px-4 py-3 rounded-lg border-2 border-amber-200 dynamic-text">
+                                    <option value="">-- اختر --</option>
+                                    <option value="ذكر">ذكر</option>
+                                    <option value="أنثي">أنثي</option>
+                                </select>
+                            </div>
+
+                            <div>
+                                <label class="block dynamic-text font-semibold mb-2">��اريخ الميلاد</label>
+                                <input type="date" id="student-birthdate"
+                                    class="w-full px-4 py-3 rounded-lg border-2 border-amber-200 dynamic-text">
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block dynamic-text font-semibold mb-2">المرحلة الدراسية *</label>
+                            <select id="student-grade" required class="w-full px-4 py-3 rounded-lg border-2 border-amber-200 dynamic-text">
+                                <option value="">-- اختر المرحلة --</option>
+                                <option value="KG1">KG1</option>
+                                <option value="KG2">KG2</option>
+                                <option value="الصف الأول الأبتدائي">الصف الأول الأبتدائي</option>
+                                <option value="الصف الثاني الأبتدائي">الصف الثاني الأبتدائي</option>
+                                <option value="الصف الثالث الأبتدائي">الصف الثالث الأبتدائي</option>
+                                <option value="الصف الرابع الأبتدائي">الصف الرابع الأبتدائي</option>
+                                <option value="الصف الخامس الأبتدائي">الصف الخامس الأبتدائي</option>
+                                <option value="الصف السادس الأبتدائي">الصف السادس الأبتدائي</option>
+                                <option value="الصف الأول الأعدادي">الصف الأول الأعدادي</option>
+                                <option value="الصف الثاني الأعدادي">الصف الثاني الأعدادي</option>
+                                <option value="الصف الثالث الأعدادي">الصف الثالث الأعدادي</option>
+                                <option value="الصف الأول الثانوي">الصف الأول الثانوي</option>
+                                <option value="الصف الثاني الثانوي">الصف الثاني الثانوي</option>
+                                <option value="الصف الثالث الثانوي">الصف الثالث الثانوي</option>
+                                <option value="شباب">شباب</option>
+                                <option value="خريجين">خريجين</option>
+                                <option value="أولياء أمور">أولياء أمور</option>
+                            </select>
+                        </div>
+
+                        <div class="grid md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block dynamic-text font-semibold mb-2">رقم الهاتف 1</label>
+                                <input type="tel" id="student-phone1"
+                                    class="w-full px-4 py-3 rounded-lg border-2 border-amber-200 dynamic-text"
+                                    placeholder="01234567890">
+                            </div>
+
+                            <div>
+                                <label class="block dynamic-text font-semibold mb-2">رقم الهاتف 2</label>
+                                <input type="tel" id="student-phone2"
+                                    class="w-full px-4 py-3 rounded-lg border-2 border-amber-200 dynamic-text"
+                                    placeholder="01234567890">
+                            </div>
+                        </div>
+
+                        <div class="grid md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block dynamic-text font-semibold mb-2">حرف الفصل *</label>
+                                <select id="student-class-letter" required class="w-full px-4 py-3 rounded-lg border-2 border-amber-200 dynamic-text">
+                                    <option value="">-- ��ختر --</option>
+                                    <option value="A">A</option>
+                                    <option value="B">B</option>
+                                    <option value="C">C</option>
+                                    <option value="D">D</option>
+                                    <option value="E">E</option>
+                                    <option value="F">F</option>
+                                </select>
+                            </div>
+
+                            <div>
+                                <label class="block dynamic-text font-semibold mb-2">الفصل داخل المركز *</label>
+                                <select id="student-center-class" required class="w-full px-4 py-3 rounded-lg border-2 border-amber-200 dynamic-text">
+                                    <option value="">-- اختر --</option>
+                                    <option value="تمهيدي">تمهيدي</option>
+                                    <option value="أولي وثانية">أولي وثانية</option>
+                                    <option value="ثالثة ورابعة">ثالثة ورابعة</option>
+                                    <option value="خامسة وسادسة">خامسة وسادسة</option>
+                                    <option value="أعدادي - ثانوي">أعدادي - ثانوي</option>
+                                    <option value="شباب وخريجين">شباب وخريجين</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block dynamic-text font-semibold mb-2">رتبة الشماسية</label>
+                            <select id="student-rank" class="w-full px-4 py-3 rounded-lg border-2 border-amber-200 dynamic-text">
+                                <option value="------------------">------------------</option>
+                                <option value="أبصالطس">أبصالطس</option>
+                                <option value="أغنسطس">أغنسطس</option>
+                                <option value="لم يتم الرسامة">لم يتم الرسامة</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label class="block dynamic-text font-semibold mb-2">العنوان</label>
+                            <textarea id="student-address" rows="2"
+                                class="w-full px-4 py-3 rounded-lg border-2 border-amber-200 dynamic-text"
+                                placeholder="العنوان الكامل..."></textarea>
+                        </div>
+
+                        <div class="border-2 border-amber-300 rounded-lg p-4 space-y-3">
+                            <h3 class="dynamic-text font-bold text-lg">📄 المستندات</h3>
+                            
+                            <div>
+                                <label class="flex items-center gap-2 cursor-pointer">
+                                    <input type="checkbox" id="student-form-submitted" class="w-5 h-5 rounded">
+                                    <span class="dynamic-text font-semibold">تم تسليم الاستمارة</span>
+                                </label>
+                            </div>
+
+                            <div id="form-upload-section" class="hidden">
+                                <label class="block dynamic-text font-semibold mb-2">رفع صورة الاستمارة</label>
+                                <div class="border-2 border-dashed border-amber-300 rounded-lg p-4 text-center cursor-pointer hover:bg-amber-50" onclick="document.getElementById('form-file').click()">
+                                    <div class="text-3xl mb-2">📄</div>
+                                    <p class="dynamic-text text-sm">اضغط لرفع صورة الاستمارة</p>
+                                    <input type="file" id="form-file" class="hidden" accept="image/*,.pdf">
+                                </div>
+                                <p id="form-file-name" class="text-sm mt-2 dynamic-text"></p>
+                            </div>
+
+                            <div>
+                                <label class="flex items-center gap-2 cursor-pointer">
+                                    <input type="checkbox" id="student-photo-submitted" class="w-5 h-5 rounded">
+                                    <span class="dynamic-text font-semibold">تم تسليم الصورة الشخصية</span>
+                                </label>
+                            </div>
+
+                            <div id="photo-upload-section" class="hidden">
+                                <label class="block dynamic-text font-semibold mb-2">رفع الصورة الشخصية</label>
+                                <div class="border-2 border-dashed border-amber-300 rounded-lg p-4 text-center cursor-pointer hover:bg-amber-50" onclick="document.getElementById('photo-file').click()">
+                                    <div class="text-3xl mb-2">📷</div>
+                                    <p class="dynamic-text text-sm">اضغط لرفع الصورة الشخصية</p>
+                                    <input type="file" id="photo-file" class="hidden" accept="image/*">
+                                </div>
+                                <p id="photo-file-name" class="text-sm mt-2 dynamic-text"></p>
+                            </div>
+
+                            <div>
+                                <label class="flex items-center gap-2 cursor-pointer">
+                                    <input type="checkbox" id="student-fees-paid" class="w-5 h-5 rounded">
+                                    <span class="dynamic-text font-semibold">تم دفع قيمة الاستمارة</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="flex gap-3">
+                            <button type="submit" class="flex-1 dynamic-primary-btn text-white py-3 px-6 rounded-lg font-bold btn-primary">
+                                ➕ إضافة الدارس
+                            </button>
+                            <button type="button" onclick="this.closest('.modal-overlay').remove()" 
+                                class="flex-1 bg-gray-400 text-white py-3 px-6 rounded-lg font-bold btn-primary">
+                                ❌ إلغاء
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            `;
+            document.body.appendChild(modal);
+
+            // إظهار/إخفاء أقسام رفع الملفات
+            document.getElementById('student-form-submitted').onchange = (e) => {
+                document.getElementById('form-upload-section').classList.toggle('hidden', !e.target.checked);
+            };
+
+            document.getElementById('student-photo-submitted').onchange = (e) => {
+                document.getElementById('photo-upload-section').classList.toggle('hidden', !e.target.checked);
+            };
+
+            // عرض اسم الملف عند الاختيار
+            document.getElementById('form-file').onchange = (e) => {
+                if (e.target.files.length > 0) {
+                    document.getElementById('form-file-name').textContent = `📎 ${e.target.files[0].name}`;
+                }
+            };
+
+            document.getElementById('photo-file').onchange = (e) => {
+                if (e.target.files.length > 0) {
+                    document.getElementById('photo-file-name').textContent = `📎 ${e.target.files[0].name}`;
+                }
+            };
+        }
+
+        async function handleAddStudent(event) {
+            event.preventDefault();
+            
+            const submitBtn = event.target.querySelector('button[type="submit"]');
+            submitBtn.disabled = true;
+            submitBtn.classList.add('loading');
+            submitBtn.innerHTML = '<span class="spinner"></span>جاري الإضافة...';
+
+            // جمع البيانات الأساسية
+            const studentType = document.getElementById('student-type').value;
+            const code = generateCode('ST');
+            const name = document.getElementById('student-name').value;
+            const gender = document.getElementById('student-gender').value;
+            const birthdate = document.getElementById('student-birthdate').value;
+            const grade = document.getElementById('student-grade').value;
+            const phone1 = document.getElementById('student-phone1').value;
+            const phone2 = document.getElementById('student-phone2').value;
+            const classLetter = document.getElementById('student-class-letter').value;
+            const centerClass = document.getElementById('student-center-class').value;
+            const rank = document.getElementById('student-rank').value;
+            const address = document.getElementById('student-address').value;
+
+            // البحث عن الخادم المسؤول تلقائياً بناءً على الفصل داخل المركز
+            const teacher = allRecords.find(t => t.type === 'teacher' && t.center_class === centerClass);
+            const teacherId = teacher ? teacher.id : null;
+
+            // المستندات
+            const formSubmitted = document.getElementById('student-form-submitted').checked;
+            const photoSubmitted = document.getElementById('student-photo-submitted').checked;
+            const feesPaid = document.getElementById('student-fees-paid').checked;
+
+            // رفع الملفات إلى Drive إذا تم اختيارها
+            let formFileUrl = null;
+            let photoFileUrl = null;
+
+            const formFile = document.getElementById('form-file').files[0];
+            if (formFile) {
+                const reader = new FileReader();
+                const formFileData = await new Promise((resolve) => {
+                    reader.onload = () => resolve(reader.result.split(',')[1]);
+                    reader.readAsDataURL(formFile);
+                });
+                
+                if (googleConfig.scriptUrl && googleConfig.driveFolderId) {
+                    formFileUrl = await uploadFileToDrive(formFileData, `استمارة_${code}_${formFile.name}`, code, 'form');
+                }
+            }
+
+            const photoFile = document.getElementById('photo-file').files[0];
+            if (photoFile) {
+                const reader = new FileReader();
+                const photoFileData = await new Promise((resolve) => {
+                    reader.onload = () => resolve(reader.result.split(',')[1]);
+                    reader.readAsDataURL(photoFile);
+                });
+                
+                if (googleConfig.scriptUrl && googleConfig.driveFolderId) {
+                    photoFileUrl = await uploadFileToDrive(photoFileData, `صورة_${code}_${photoFile.name}`, code, 'photo');
+                }
+            }
+
+            // إنشاء كائن البيانات
+            const studentData = {
+                id: 'student_' + Date.now(),
+                type: 'student',
+                student_type: studentType,
+                code: code,
+                name: name,
+                gender: gender,
+                birthdate: birthdate,
+                grade: grade,
+                phone1: phone1,
+                phone2: phone2,
+                class_letter: classLetter,
+                center_class: centerClass,
+                rank: rank,
+                address: address,
+                teacher_id: teacherId,
+                form_submitted: formSubmitted,
+                form_file_url: formFileUrl,
+                photo_submitted: photoSubmitted,
+                photo_file_url: photoFileUrl,
+                fees_paid: feesPaid,
+                synced_to_google: false,
+                created_at: new Date().toISOString()
+            };
+
+            const result = await window.dataSdk.create(studentData);
+
+            if (result.isOk) {
+                showToast(`تم إضافة الدارس بنجاح! الكود: ${studentData.code}`, 'success');
+                document.querySelector('.modal-overlay').remove();
+                
+                if (googleConfig.scriptUrl) {
+                    syncToGoogle(studentData);
+                }
+            } else {
+                showToast('فشل في إضافة الدارس', 'error');
+                submitBtn.disabled = false;
+                submitBtn.classList.remove('loading');
+                submitBtn.innerHTML = '➕ إضافة الدارس';
+            }
+        }
+
+        function confirmDelete(id, type, name) {
+            const modal = document.createElement('div');
+            modal.className = 'modal-overlay fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50';
+            modal.innerHTML = `
+                <div class="modal-content dynamic-surface rounded-2xl shadow-2xl p-6 max-w-md w-full">
+                    <div class="text-center">
+                        <div class="text-6xl mb-4">⚠️</div>
+                        <h2 class="dynamic-text text-2xl font-bold mb-4">تأكيد الحذف</h2>
+                        <p class="dynamic-text mb-6">هل أنت متأكد من حذف: <strong>${name}</strong>؟</p>
+                        <div class="flex gap-3">
+                            <button onclick="deleteRecord('${id}')" class="flex-1 bg-red-500 text-white py-3 px-6 rounded-lg font-bold btn-primary">
+                                🗑️ حذف
+                            </button>
+                            <button onclick="this.closest('.modal-overlay').remove()" 
+                                class="flex-1 bg-gray-400 text-white py-3 px-6 rounded-lg font-bold btn-primary">
+                                ❌ إلغاء
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(modal);
+        }
+
+        async function deleteRecord(id) {
+            const record = allRecords.find(r => r.id === id);
+            if (!record) return;
+
+            const result = await window.dataSdk.delete(record);
+
+            if (result.isOk) {
+                showToast('تم الحذف بنجاح', 'success');
+                document.querySelector('.modal-overlay').remove();
+            } else {
+                showToast('فشل في الحذف', 'error');
+            }
+        }
+
+        function showGoogleSettings() {
+            const modal = document.createElement('div');
+            modal.className = 'modal-overlay fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50';
+            modal.innerHTML = `
+                <div class="modal-content dynamic-surface rounded-2xl shadow-2xl p-6 max-w-2xl w-full max-h-[90%] overflow-y-auto">
+                    <h2 class="dynamic-text text-2xl font-bold mb-4">�� إعدادات Google</h2>
+                    
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block dynamic-text font-semibold mb-2">Google Apps Script URL</label>
+                            <input type="url" id="script-url" value="${googleConfig.scriptUrl}"
+                                class="w-full px-4 py-3 rounded-lg border-2 border-amber-200 dynamic-text"
+                                placeholder="https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec">
+                            <p class="text-sm opacity-60 mt-1">رابط Web App من Google Apps Script</p>
+                        </div>
+                        
+                        <div>
+                            <label class="block dynamic-text font-semibold mb-2">Google Drive Folder ID</label>
+                            <input type="text" id="folder-id" value="${googleConfig.driveFolderId}"
+                                class="w-full px-4 py-3 rounded-lg border-2 border-amber-200 dynamic-text"
+                                placeholder="1AbCdEfGhIjKlMnOpQrStUvWxYz">
+                            <p class="text-sm opacity-60 mt-1">معرف المجلد في Google Drive لرفع الملفات</p>
+                        </div>
+
+                        <div class="bg-amber-50 p-4 rounded-lg">
+                            <h3 class="font-bold mb-2">📚 كيفية الحصول على المعرفات:</h3>
+                            <ol class="text-sm space-y-2 opacity-75">
+                                <li><strong>1. Google Apps Script URL:</strong> بعد نشر السكربت كـ Web App، انسخ الرابط الذي يظهر</li>
+                                <li><strong>2. Drive Folder ID:</strong> من رابط المجلد في Drive، انسخ الجزء بعد /folders/</li>
+                                <li class="text-xs mt-2">مثال: https://drive.google.com/drive/folders/<span class="bg-yellow-200">1AbCdEf...</span></li>
+                            </ol>
+                        </div>
+
+                        <div class="flex gap-3">
+                            <button onclick="testGoogleConnection()" class="flex-1 bg-blue-500 text-white py-3 px-6 rounded-lg font-bold btn-primary">
+                                🔍 اختبار الاتصال
+                            </button>
+                            <button onclick="saveGoogleSettings()" class="flex-1 dynamic-primary-btn text-white py-3 px-6 rounded-lg font-bold btn-primary">
+                                💾 حفظ الإعدادات
+                            </button>
+                        </div>
+                        
+                        <button onclick="syncAllToGoogle()" class="w-full dynamic-secondary-btn text-white py-3 px-6 rounded-lg font-bold btn-primary">
+                            🔄 مزامنة جميع البيانات مع Google
+                        </button>
+
+                        <button onclick="document.querySelector('.modal-overlay').remove()" 
+                            class="w-full bg-gray-400 text-white py-3 px-6 rounded-lg font-bold btn-primary">
+                            ❌ إغلاق
+                        </button>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(modal);
+        }
+
+        function saveGoogleSettings() {
+            const scriptUrl = document.getElementById('script-url').value;
+            const folderId = document.getElementById('folder-id').value;
+            
+            googleConfig = {
+                scriptUrl: scriptUrl,
+                driveFolderId: folderId
+            };
+            
+            localStorage.setItem('googleConfig', JSON.stringify(googleConfig));
+            showToast('تم حفظ إعدادات Google بنجاح! ✓', 'success');
+        }
+
+        async function syncAllToGoogle() {
+            if (!googleConfig.scriptUrl) {
+                showToast('الرجاء حفظ إعدادات Google ��ولاً', 'error');
+                return;
+            }
+
+            showToast('جاري المزامنة...', 'info');
+            
+            let synced = 0;
+            for (const record of allRecords) {
+                if (!record.synced_to_google && ['student', 'teacher', 'attendance', 'homework'].includes(record.type)) {
+                    await syncToGoogle(record);
+                    synced++;
+                }
+            }
+            
+            showToast(`تمت مزامنة ${synced} سجل بنجاح! ���`, 'success');
+        }
+
+        // =====================================================
+        // DATA EXPORT & IMPORT FUNCTIONS
+        // =====================================================
+
+        function exportDataAsJSON() {
+            const dataToExport = {
+                students: allRecords.filter(r => r.type === 'student'),
+                teachers: allRecords.filter(r => r.type === 'teacher'),
+                attendance: allRecords.filter(r => r.type === 'attendance'),
+                homework: allRecords.filter(r => r.type === 'homework'),
+                exportDate: new Date().toISOString()
+            };
+
+            const dataStr = JSON.stringify(dataToExport, null, 2);
+            const dataBlob = new Blob([dataStr], { type: 'application/json' });
+            const url = URL.createObjectURL(dataBlob);
+            
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `backup_${new Date().toISOString().split('T')[0]}.json`;
+            link.click();
+            
+            URL.revokeObjectURL(url);
+            showToast('تم تنزيل نسخة JSON بنجاح! ✓', 'success');
+        }
+
+        function exportDataAsExcel() {
+            const students = allRecords.filter(r => r.type === 'student');
+            const teachers = allRecords.filter(r => r.type === 'teacher');
+
+            // تحويل البيانات إلى CSV
+            let csvContent = '\uFEFF'; // BOM for UTF-8
+            
+            // جدول الدارسين
+            csvContent += 'بيانات الدارسين\n';
+            csvContent += 'نوع الدارس,كود الدارس,اسم الدارس,النوع,تاريخ الميلاد,المرحلة الدراسية,رقم الهاتف 1,رقم الهاتف 2,حرف الفصل,الفصل داخل المركز,رتبة الشماسية,العنوان,الاستمارة,الصورة,قيمة الاستمارة\n';
+            
+            students.forEach(s => {
+                csvContent += `"${s.student_type || ''}","${s.code}","${s.name}","${s.gender || ''}","${s.birthdate || ''}","${s.grade || ''}","${s.phone1 || ''}","${s.phone2 || ''}","${s.class_letter || ''}","${s.center_class || ''}","${s.rank || ''}","${s.address || ''}","${s.form_submitted ? 'TRUE' : 'FALSE'}","${s.photo_submitted ? 'TRUE' : 'FALSE'}","${s.fees_paid ? 'TRUE' : 'FALSE'}"\n`;
+            });
+
+            csvContent += '\n\nبيانات الخدام\n';
+            csvContent += 'كود الخادم,اسم الخادم,رقم الهاتف,التخصص,إداري,كلمة المرور,الفصل داخل المركز\n';
+            
+            teachers.forEach(t => {
+                csvContent += `"${t.code}","${t.name}","${t.phone}","${t.specialty || ''}","${t.is_admin ? 'TRUE' : 'FALSE'}","${t.password}","${t.center_class || ''}"\n`;
+            });
+
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `backup_${new Date().toISOString().split('T')[0]}.csv`;
+            link.click();
+            
+            URL.revokeObjectURL(url);
+            showToast('تم تنزيل نسخة Excel بنجاح! ✓', 'success');
+        }
+
+        function importData() {
+            const modal = document.createElement('div');
+            modal.className = 'modal-overlay fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50';
+            modal.innerHTML = `
+                <div class="modal-content dynamic-surface rounded-2xl shadow-2xl p-6 max-w-lg w-full">
+                    <h2 class="dynamic-text text-2xl font-bold mb-4">📤 استعادة البيانات</h2>
+                    <div class="space-y-4">
+                        <div class="border-2 border-dashed border-amber-300 rounded-lg p-8 text-center cursor-pointer hover:bg-amber-50" onclick="document.getElementById('import-file').click()">
+                            <div class="text-5xl mb-3">📁</div>
+                            <p class="dynamic-text font-semibold">اختر ملف JSON</p>
+                            <p class="text-sm opacity-60 mt-2">ملف النسخة الاحتياطية</p>
+                            <input type="file" id="import-file" class="hidden" accept=".json">
+                        </div>
+                        <p id="import-file-name" class="text-sm dynamic-text text-center"></p>
+                        <div class="flex gap-3">
+                            <button onclick="handleImport()" class="flex-1 dynamic-primary-btn text-white py-3 px-6 rounded-lg font-bold btn-primary">
+                                📤 استعادة
+                            </button>
+                            <button onclick="this.closest('.modal-overlay').remove()" class="flex-1 bg-gray-400 text-white py-3 px-6 rounded-lg font-bold btn-primary">
+                                ❌ إلغاء
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(modal);
+
+            document.getElementById('import-file').onchange = (e) => {
+                if (e.target.files.length > 0) {
+                    document.getElementById('import-file-name').textContent = `📎 ${e.target.files[0].name}`;
+                }
+            };
+        }
+
+        async function handleImport() {
+            const fileInput = document.getElementById('import-file');
+            if (fileInput.files.length === 0) {
+                showToast('الرجاء اختيار ملف JSON', 'error');
+                return;
+            }
+
+            const file = fileInput.files[0];
+            const reader = new FileReader();
+
+            reader.onload = async (e) => {
+                try {
+                    const data = JSON.parse(e.target.result);
+                    
+                    let imported = 0;
+                    const allData = [
+                        ...(data.students || []),
+                        ...(data.teachers || []),
+                        ...(data.attendance || []),
+                        ...(data.homework || [])
+                    ];
+
+                    for (const record of allData) {
+                        // التحقق من عدم وجود السجل
+                        const exists = allRecords.find(r => r.id === record.id);
+                        if (!exists) {
+                            const result = await window.dataSdk.create(record);
+                            if (result.isOk) {
+                                imported++;
+                            }
+                        }
+                    }
+
+                    showToast(`تم استعادة ${imported} سجل بنجاح! ✓`, 'success');
+                    document.querySelector('.modal-overlay').remove();
+                } catch (error) {
+                    showToast('فشل في قراءة الملف', 'error');
+                }
+            };
+
+            reader.readAsText(file);
+        }
+
+        function confirmClearStudents() {
+            const modal = document.createElement('div');
+            modal.className = 'modal-overlay fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50';
+            modal.innerHTML = `
+                <div class="modal-content dynamic-surface rounded-2xl shadow-2xl p-6 max-w-md w-full">
+                    <div class="text-center">
+                        <div class="text-6xl mb-4">⚠️</div>
+                        <h2 class="dynamic-text text-2xl font-bold mb-4">تحذير!</h2>
+                        <p class="dynamic-text mb-6">هل أنت متأكد من حذف <strong>جميع بيانات الدارسين</strong>؟<br>هذا الإجراء لا يمكن التراجع عنه!</p>
+                        <div class="flex gap-3">
+                            <button onclick="clearStudentsData()" class="flex-1 bg-red-600 text-white py-3 px-6 rounded-lg font-bold btn-primary">
+                                🗑️ تأكيد الحذف
+                            </button>
+                            <button onclick="this.closest('.modal-overlay').remove()" class="flex-1 bg-gray-400 text-white py-3 px-6 rounded-lg font-bold btn-primary">
+                                ❌ إلغاء
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(modal);
+        }
+
+        async function clearStudentsData() {
+            const students = allRecords.filter(r => r.type === 'student');
+            const attendance = allRecords.filter(r => r.type === 'attendance');
+            const homework = allRecords.filter(r => r.type === 'homework');
+            
+            let deleted = 0;
+            
+            for (const record of [...students, ...attendance, ...homework]) {
+                const result = await window.dataSdk.delete(record);
+                if (result.isOk) {
+                    deleted++;
+                }
+            }
+
+            showToast(`تم حذف ${deleted} سجل بنجاح! ✓`, 'success');
+            document.querySelector('.modal-overlay').remove();
+
+            // مزامنة مع Google Sheets
+            if (googleConfig.scriptUrl) {
+                await fetch(googleConfig.scriptUrl, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ action: 'clearStudents' })
+                });
+            }
+        }
+
+        function confirmClearTeachers() {
+            const modal = document.createElement('div');
+            modal.className = 'modal-overlay fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50';
+            modal.innerHTML = `
+                <div class="modal-content dynamic-surface rounded-2xl shadow-2xl p-6 max-w-md w-full">
+                    <div class="text-center">
+                        <div class="text-6xl mb-4">⚠️</div>
+                        <h2 class="dynamic-text text-2xl font-bold mb-4">تحذير!</h2>
+                        <p class="dynamic-text mb-6">هل أنت متأكد من حذف <strong>جميع بيانات الخدام</strong>؟<br>هذا الإجراء لا يمكن التراجع عنه!</p>
+                        <div class="flex gap-3">
+                            <button onclick="clearTeachersData()" class="flex-1 bg-red-600 text-white py-3 px-6 rounded-lg font-bold btn-primary">
+                                🗑️ تأكيد الحذف
+                            </button>
+                            <button onclick="this.closest('.modal-overlay').remove()" class="flex-1 bg-gray-400 text-white py-3 px-6 rounded-lg font-bold btn-primary">
+                                ❌ إلغاء
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(modal);
+        }
+
+        async function clearTeachersData() {
+            const teachers = allRecords.filter(r => r.type === 'teacher');
+            
+            let deleted = 0;
+            
+            for (const record of teachers) {
+                const result = await window.dataSdk.delete(record);
+                if (result.isOk) {
+                    deleted++;
+                }
+            }
+
+            showToast(`تم حذف ${deleted} سجل بنجاح! ✓`, 'success');
+            document.querySelector('.modal-overlay').remove();
+
+            // مزامنة مع Google Sheets
+            if (googleConfig.scriptUrl) {
+                await fetch(googleConfig.scriptUrl, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ action: 'clearTeachers' })
+                });
+            }
+        }
+
+        // =====================================================
+        // INITIALIZE ON LOAD
+        // =====================================================
+
+        window.addEventListener('DOMContentLoaded', initializeApp);
+    </script>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9a189859729be28a',t:'MTc2MzY0ODUwMC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
