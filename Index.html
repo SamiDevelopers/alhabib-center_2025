@@ -1,0 +1,2469 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>مركز الحبيب للألحان والدراسات القبطية</title>
+  <style>
+        body {
+            box-sizing: border-box;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a2332 0%, #2d1b3d 100%);
+            color: #f5f0e8;
+            min-height: 100%;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, #1a2332 0%, #4a1942 100%);
+            padding: 30px 20px;
+            text-align: center;
+            border-bottom: 3px solid #d4af37;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        }
+        
+        .header h1 {
+            color: #d4af37;
+            font-size: 2em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        }
+        
+        .header-icons {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-top: 20px;
+        }
+        
+        .icon {
+            font-size: 2em;
+        }
+        
+        /* Navigation */
+        .nav-tabs {
+            display: flex;
+            gap: 10px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+            background: rgba(26, 35, 50, 0.6);
+            padding: 15px;
+            border-radius: 10px;
+        }
+        
+        .nav-tab {
+            padding: 12px 24px;
+            background: linear-gradient(135deg, #4a1942 0%, #1a2332 100%);
+            color: #d4af37;
+            border: 2px solid #d4af37;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 1em;
+            font-weight: bold;
+        }
+        
+        .nav-tab:hover {
+            background: linear-gradient(135deg, #6a2962 0%, #2a3342 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(212, 175, 55, 0.4);
+        }
+        
+        .nav-tab.active {
+            background: linear-gradient(135deg, #d4af37 0%, #f5d76e 100%);
+            color: #1a2332;
+            border-color: #f5d76e;
+        }
+        
+        /* Cards */
+        .card {
+            background: rgba(42, 35, 50, 0.9);
+            border-radius: 12px;
+            padding: 25px;
+            margin: 20px 0;
+            border: 2px solid #4a1942;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.4);
+        }
+        
+        .card h2 {
+            color: #d4af37;
+            margin-bottom: 15px;
+            border-bottom: 2px solid #d4af37;
+            padding-bottom: 10px;
+        }
+        
+        .card h3 {
+            color: #f5d76e;
+            margin: 20px 0 10px;
+        }
+        
+        /* Grid Layout */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+        
+        .info-box {
+            background: linear-gradient(135deg, #2a2332 0%, #3a2342 100%);
+            padding: 20px;
+            border-radius: 10px;
+            border-right: 4px solid #d4af37;
+        }
+        
+        .info-box label {
+            display: block;
+            color: #d4af37;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+        
+        .info-box p {
+            color: #f5f0e8;
+            font-size: 1.1em;
+        }
+        
+        /* Forms */
+        .form-group {
+            margin: 20px 0;
+        }
+        
+        .form-group label {
+            display: block;
+            color: #d4af37;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+        
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #4a1942;
+            border-radius: 8px;
+            background: rgba(26, 35, 50, 0.8);
+            color: #f5f0e8;
+            font-size: 1em;
+        }
+        
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #d4af37;
+            box-shadow: 0 0 10px rgba(212, 175, 55, 0.3);
+        }
+        
+        /* Buttons */
+        .btn {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: bold;
+            transition: all 0.3s;
+            margin: 5px;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #d4af37 0%, #f5d76e 100%);
+            color: #1a2332;
+        }
+        
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #f5d76e 0%, #d4af37 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(212, 175, 55, 0.5);
+        }
+        
+        .btn-secondary {
+            background: linear-gradient(135deg, #4a1942 0%, #6a2962 100%);
+            color: #f5f0e8;
+            border: 2px solid #d4af37;
+        }
+        
+        .btn-secondary:hover {
+            background: linear-gradient(135deg, #6a2962 0%, #8a3982 100%);
+        }
+        
+        .btn-danger {
+            background: linear-gradient(135deg, #8b1538 0%, #6a1942 100%);
+            color: #f5f0e8;
+        }
+        
+        .btn-danger:hover {
+            background: linear-gradient(135deg, #ab1548 0%, #8a2952 100%);
+        }
+        
+        /* Tables */
+        .table-container {
+            overflow-x: auto;
+            margin: 20px 0;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: rgba(42, 35, 50, 0.9);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        
+        th {
+            background: linear-gradient(135deg, #4a1942 0%, #1a2332 100%);
+            color: #d4af37;
+            padding: 15px;
+            text-align: center;
+            font-weight: bold;
+        }
+        
+        td {
+            padding: 12px;
+            border-bottom: 1px solid #4a1942;
+            text-align: center;
+        }
+        
+        tr:hover {
+            background: rgba(74, 25, 66, 0.3);
+        }
+        
+        /* Stats */
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+        
+        .stat-box {
+            background: linear-gradient(135deg, #2a2332 0%, #3a2342 100%);
+            padding: 25px;
+            border-radius: 10px;
+            text-align: center;
+            border: 2px solid #d4af37;
+        }
+        
+        .stat-box h3 {
+            color: #d4af37;
+            font-size: 2.5em;
+            margin: 10px 0;
+        }
+        
+        .stat-box p {
+            color: #f5f0e8;
+            font-size: 1.1em;
+        }
+        
+        /* Hidden */
+        .hidden {
+            display: none !important;
+        }
+        
+        /* Progress Bar */
+        .progress-bar {
+            width: 100%;
+            height: 30px;
+            background: rgba(26, 35, 50, 0.8);
+            border-radius: 15px;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #d4af37 0%, #f5d76e 100%);
+            transition: width 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #1a2332;
+            font-weight: bold;
+        }
+        
+        /* Status Badges */
+        .badge {
+            display: inline-block;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            font-weight: bold;
+        }
+        
+        .badge-success {
+            background: #2d5016;
+            color: #90ee90;
+        }
+        
+        .badge-warning {
+            background: #6b4423;
+            color: #ffa500;
+        }
+        
+        .badge-danger {
+            background: #6a1942;
+            color: #ff6b6b;
+        }
+        
+        .badge-pending {
+            background: #2a3342;
+            color: #87ceeb;
+        }
+        
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal.active {
+            display: flex;
+        }
+        
+        .modal-content {
+            background: linear-gradient(135deg, #1a2332 0%, #2d1b3d 100%);
+            padding: 30px;
+            border-radius: 15px;
+            max-width: 600px;
+            width: 90%;
+            max-height: 90%;
+            overflow-y: auto;
+            border: 3px solid #d4af37;
+        }
+        
+        .modal-header {
+            border-bottom: 2px solid #d4af37;
+            padding-bottom: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .modal-header h2 {
+            color: #d4af37;
+        }
+        
+        .close-modal {
+            float: left;
+            font-size: 2em;
+            cursor: pointer;
+            color: #d4af37;
+            line-height: 1;
+        }
+        
+        .close-modal:hover {
+            color: #f5d76e;
+        }
+        
+        /* Audio Recorder */
+        .audio-recorder {
+            background: rgba(42, 35, 50, 0.9);
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            margin: 20px 0;
+        }
+        
+        .audio-recorder button {
+            margin: 10px;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 1.5em;
+            }
+            
+            .nav-tabs {
+                flex-direction: column;
+            }
+            
+            .nav-tab {
+                width: 100%;
+            }
+            
+            .grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .stats {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        /* Login Page */
+        .login-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: calc(100% - 200px);
+            padding: 40px 20px;
+        }
+        
+        .login-box {
+            background: rgba(42, 35, 50, 0.95);
+            padding: 40px;
+            border-radius: 15px;
+            border: 3px solid #d4af37;
+            max-width: 450px;
+            width: 100%;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+        
+        .login-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+        }
+        
+        .login-tab {
+            flex: 1;
+            padding: 12px;
+            background: rgba(26, 35, 50, 0.6);
+            color: #d4af37;
+            border: 2px solid #4a1942;
+            border-radius: 8px;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.3s;
+        }
+        
+        .login-tab:hover {
+            border-color: #d4af37;
+        }
+        
+        .login-tab.active {
+            background: linear-gradient(135deg, #d4af37 0%, #f5d76e 100%);
+            color: #1a2332;
+            border-color: #f5d76e;
+        }
+        
+        /* Home Page */
+        .hero {
+            text-align: center;
+            padding: 60px 20px;
+            background: rgba(42, 35, 50, 0.8);
+            border-radius: 15px;
+            margin: 30px 0;
+            border: 2px solid #d4af37;
+        }
+        
+        .hero h2 {
+            font-size: 2.5em;
+            color: #d4af37;
+            margin-bottom: 20px;
+        }
+        
+        .hero p {
+            font-size: 1.2em;
+            line-height: 1.8;
+            margin: 15px 0;
+        }
+        
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 25px;
+            margin: 40px 0;
+        }
+        
+        .feature-card {
+            background: linear-gradient(135deg, #2a2332 0%, #3a2342 100%);
+            padding: 30px;
+            border-radius: 12px;
+            text-align: center;
+            border: 2px solid #4a1942;
+            transition: all 0.3s;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-5px);
+            border-color: #d4af37;
+            box-shadow: 0 8px 20px rgba(212, 175, 55, 0.3);
+        }
+        
+        .feature-card .icon {
+            font-size: 3em;
+            margin-bottom: 15px;
+        }
+        
+        .feature-card h3 {
+            color: #d4af37;
+            margin: 15px 0;
+        }
+        
+        /* Checkbox styling */
+        input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            accent-color: #d4af37;
+        }
+        
+        /* File upload styling */
+        input[type="file"] {
+            padding: 10px;
+            background: rgba(26, 35, 50, 0.8);
+            border: 2px solid #4a1942;
+            border-radius: 8px;
+            color: #f5f0e8;
+            cursor: pointer;
+        }
+        
+        input[type="file"]:hover {
+            border-color: #d4af37;
+        }
+        
+        /* Toast Notification */
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: linear-gradient(135deg, #2a2332 0%, #3a2342 100%);
+            color: #f5f0e8;
+            padding: 20px 30px;
+            border-radius: 10px;
+            border: 2px solid #d4af37;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.5);
+            display: none;
+            z-index: 2000;
+            animation: slideIn 0.3s ease-out;
+        }
+        
+        .toast.show {
+            display: block;
+        }
+        
+        @keyframes slideIn {
+            from {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+        
+        .logout-btn {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 100;
+        }
+    </style>
+  <style>@view-transition { navigation: auto; }</style>
+  <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
+  <script src="/_sdk/element_sdk.js" type="text/javascript"></script>
+  <script src="https://cdn.tailwindcss.com" type="text/javascript"></script>
+ </head>
+ <body><!-- Header -->
+  <div class="header">
+   <div class="header-icons"><span class="icon">📖</span> <span class="icon">✝</span> <span class="icon">🎵</span>
+   </div>
+   <h1 id="centerName">مركز الحبيب للألحان والدراسات القبطية</h1>
+  </div><!-- Logout Button (hidden initially) --> <button class="btn btn-secondary logout-btn hidden" id="logoutBtn">تسجيل الخروج</button> <!-- Main Container -->
+  <div class="container"><!-- Home Page -->
+   <div id="homePage">
+    <div class="hero">
+     <h2>مرحباً بكم في مركز الحبيب للألحان والدراسات القبطية</h2>
+     <p>مركز متخصص في تعليم الألحان القبطية والدراسات الكنسية وفق التقليد الأرثوذكسي الأصيل</p>
+    </div>
+    <div class="card">
+     <h2>✨ رؤية المركز</h2>
+     <p id="visionText">إنشاء جيل واعٍ بالتراث الكنسي والألحان القبطية الأصيلة، يحمل روح الآباء ويخدم الكنيسة بأمانة وتميز</p>
+    </div>
+    <div class="card">
+     <h2>🎯 رسالة المركز</h2>
+     <p id="missionText">تقديم تعليم متميز في الألحان القبطية والدراسات الكنسية من خلال منهج روحي وعلمي متكامل، مع متابعة دقيقة لتقدم الدارسين</p>
+    </div>
+    <div class="card">
+     <h2>📋 أهداف المركز</h2>
+     <ul style="line-height: 2; padding-right: 30px; font-size: 1.1em;">
+      <li>تعليم الألحان القبطية الأصيلة بطريقة علمية منهجية</li>
+      <li>تخريج خدام متميزين في خدمة التسبحة والألحان</li>
+      <li>الحفاظ على التراث الكنسي القبطي وتوثيقه</li>
+      <li>تنمية المهارات الروحية والخدمية للدارسين</li>
+      <li>توفير بيئة تعليمية تفاعلية ومتطورة</li>
+     </ul>
+    </div>
+    <div class="card">
+     <h2>👥 الفئات المستهدفة</h2>
+     <div class="features-grid">
+      <div class="feature-card">
+       <div class="icon">
+        👨‍🎓
+       </div>
+       <h3>الدارسين</h3>
+       <p>جميع الأعمار والمراحل الدراسية من الراغبين في تعلم الألحان القبطية</p>
+      </div>
+      <div class="feature-card">
+       <div class="icon">
+        👨‍🏫
+       </div>
+       <h3>الخدام</h3>
+       <p>معلمو الألحان والمسؤولون عن الفصول الدراسية</p>
+      </div>
+      <div class="feature-card">
+       <div class="icon">
+        👨‍💼
+       </div>
+       <h3>مسؤولو الخدمة</h3>
+       <p>الإدارة العامة للمركز والمتابعة الشاملة</p>
+      </div>
+     </div>
+    </div>
+    <div style="text-align: center; margin: 40px 0;"><button class="btn btn-primary" onclick="showLogin()" style="font-size: 1.2em; padding: 15px 40px;"> تسجيل الدخول </button>
+    </div>
+   </div><!-- Login Page -->
+   <div id="loginPage" class="hidden">
+    <div class="login-container">
+     <div class="login-box">
+      <h2 style="text-align: center; color: #d4af37; margin-bottom: 30px;">تسجيل الدخول</h2>
+      <div class="login-tabs">
+       <div class="login-tab active" onclick="switchLoginTab('student')">
+        دارس
+       </div>
+       <div class="login-tab" onclick="switchLoginTab('teacher')">
+        خادم
+       </div>
+       <div class="login-tab" onclick="switchLoginTab('admin')">
+        مسؤول
+       </div>
+      </div><!-- Student Login -->
+      <div id="studentLogin">
+       <div class="form-group"><label>كود الدارس</label> <input type="text" id="studentCode" placeholder="أدخل الكود الخاص بك">
+       </div><button class="btn btn-primary" onclick="loginStudent()" style="width: 100%;">دخول</button>
+      </div><!-- Teacher Login -->
+      <div id="teacherLogin" class="hidden">
+       <div class="form-group"><label>كود الخادم</label> <input type="text" id="teacherCode" placeholder="أدخل كود الخادم">
+       </div>
+       <div class="form-group"><label>كلمة المرور</label> <input type="password" id="teacherPassword" placeholder="أدخل كلمة المرور">
+       </div><button class="btn btn-primary" onclick="loginTeacher()" style="width: 100%;">دخول</button>
+      </div><!-- Admin Login -->
+      <div id="adminLogin" class="hidden">
+       <div class="form-group"><label>اسم المستخدم</label> <input type="text" id="adminUsername" placeholder="أدخل اسم المستخدم">
+       </div>
+       <div class="form-group"><label>كلمة المرور</label> <input type="password" id="adminPassword" placeholder="أدخل كلمة المرور">
+       </div><button class="btn btn-primary" onclick="loginAdmin()" style="width: 100%;">دخول</button>
+      </div>
+      <div style="text-align: center; margin-top: 20px;"><button class="btn btn-secondary" onclick="backToHome()">العودة للرئيسية</button>
+      </div>
+     </div>
+    </div>
+   </div><!-- Student Dashboard -->
+   <div id="studentDashboard" class="hidden">
+    <div class="nav-tabs"><button class="nav-tab active" onclick="switchStudentTab('profile')">الملف الشخصي</button> <button class="nav-tab" onclick="switchStudentTab('grades')">درجات الدروس</button> <button class="nav-tab" onclick="switchStudentTab('attendance')">الحضور</button> <button class="nav-tab" onclick="switchStudentTab('assignments')">الواجبات</button>
+    </div><!-- Profile Tab -->
+    <div id="studentProfile" class="card">
+     <h2>الملف الشخصي</h2>
+     <div class="grid">
+      <div class="info-box"><label>الاسم</label>
+       <p id="studentName">-</p>
+      </div>
+      <div class="info-box"><label>كود المركز</label>
+       <p id="studentCodeDisplay">-</p>
+      </div>
+      <div class="info-box"><label>النوع</label>
+       <p id="studentGender">-</p>
+      </div>
+      <div class="info-box"><label>المرحلة</label>
+       <p id="studentStage">-</p>
+      </div>
+      <div class="info-box"><label>الفصل</label>
+       <p id="studentClass">-</p>
+      </div>
+      <div class="info-box"><label>رقم الهاتف</label>
+       <p id="studentPhone">-</p>
+      </div>
+     </div>
+    </div><!-- Grades Tab -->
+    <div id="studentGrades" class="card hidden">
+     <h2>درجات الدروس</h2>
+     <div class="stats">
+      <div class="stat-box">
+       <p>الواجبات المطلوبة</p>
+       <h3 id="totalAssignments">10</h3>
+      </div>
+      <div class="stat-box">
+       <p>تم التقييم</p>
+       <h3 id="gradedAssignments">0</h3>
+      </div>
+      <div class="stat-box">
+       <p>المتبقية</p>
+       <h3 id="remainingAssignments">10</h3>
+      </div>
+     </div>
+     <div class="card">
+      <h3>ملخص الدرجات</h3>
+      <div class="info-box" style="margin: 15px 0;"><label>مجموع الدرجات</label>
+       <p id="totalGrade" style="font-size: 1.5em; color: #d4af37;">0 / 100</p>
+      </div>
+      <div class="info-box" style="margin: 15px 0;"><label>المتوسط النهائي</label>
+       <p id="averageGrade" style="font-size: 1.5em; color: #d4af37;">0%</p>
+      </div>
+     </div>
+     <div class="table-container">
+      <table>
+       <thead>
+        <tr>
+         <th>الواجب</th>
+         <th>الحالة</th>
+         <th>الدرجة</th>
+        </tr>
+       </thead>
+       <tbody id="gradesTable"><!-- Grades will be populated here -->
+       </tbody>
+      </table>
+     </div>
+     <div class="card" id="studentNotesCard" style="display: none;">
+      <h3>ملاحظات خاصة</h3>
+      <p id="studentNotes">لا توجد ملاحظات</p>
+     </div>
+    </div><!-- Attendance Tab -->
+    <div id="studentAttendance" class="card hidden">
+     <h2>سجل الحضور</h2>
+     <div class="stats">
+      <div class="stat-box">
+       <p>إجمالي الأسابيع</p>
+       <h3>15</h3>
+      </div>
+      <div class="stat-box">
+       <p>أيام الحضور</p>
+       <h3 id="presentDays">0</h3>
+      </div>
+      <div class="stat-box">
+       <p>أيام الغياب</p>
+       <h3 id="absentDays">0</h3>
+      </div>
+      <div class="stat-box">
+       <p>نسبة الحضور</p>
+       <h3 id="attendanceRate">0%</h3>
+      </div>
+     </div>
+     <div id="attendanceAlert" class="card" style="text-align: center;"><!-- Alert will be populated here -->
+     </div>
+     <div class="table-container">
+      <table>
+       <thead>
+        <tr>
+         <th>الأسبوع</th>
+         <th>التاريخ</th>
+         <th>الحالة</th>
+        </tr>
+       </thead>
+       <tbody id="attendanceTable"><!-- Attendance will be populated here -->
+       </tbody>
+      </table>
+     </div>
+    </div><!-- Assignments Tab -->
+    <div id="studentAssignments" class="card hidden">
+     <h2>الواجبات</h2>
+     <div class="stats">
+      <div class="stat-box">
+       <p>الواجبات المطلوبة</p>
+       <h3>10</h3>
+      </div>
+      <div class="stat-box">
+       <p>المرسلة</p>
+       <h3 id="submittedCount">0</h3>
+      </div>
+     </div>
+     <div id="assignmentSubmissionInfo" class="card" style="text-align: center;">
+      <p style="font-size: 1.1em;">📅 يمكن إرسال الواجبات من الجمعة إلى الثلاثاء فقط</p>
+     </div><button class="btn btn-primary" onclick="openAssignmentModal()" id="addAssignmentBtn"> ➕ إضافة واجب جديد </button>
+     <div id="assignmentsList"><!-- Assignments will be populated here -->
+     </div>
+    </div>
+   </div><!-- Teacher Dashboard -->
+   <div id="teacherDashboard" class="hidden">
+    <div class="card">
+     <h2>بيانات الخادم</h2>
+     <div class="grid">
+      <div class="info-box"><label>الاسم</label>
+       <p id="teacherName">-</p>
+      </div>
+      <div class="info-box"><label>الكود</label>
+       <p id="teacherCodeDisplay">-</p>
+      </div>
+      <div class="info-box"><label>رقم الهاتف</label>
+       <p id="teacherPhone">-</p>
+      </div>
+      <div class="info-box"><label>التخصص</label>
+       <p id="teacherSpecialty">-</p>
+      </div>
+      <div class="info-box"><label>الفصل المسؤول</label>
+       <p id="teacherClassDisplay">-</p>
+      </div>
+      <div class="info-box"><label>عدد الطلاب</label>
+       <p id="teacherStudentCount">0</p>
+      </div>
+     </div>
+    </div>
+    <div class="nav-tabs"><button class="nav-tab active" onclick="switchTeacherTab('attendance')">تسجيل الحضور</button> <button class="nav-tab" onclick="switchTeacherTab('grading')">تقييم الواجبات</button> <button class="nav-tab" onclick="switchTeacherTab('grades')">إدخال الدرجات</button> <button class="nav-tab" onclick="switchTeacherTab('students')">طلابي</button> <button class="nav-tab" onclick="switchTeacherTab('followup')">الافتقاد</button>
+    </div><!-- Attendance Tab -->
+    <div id="teacherAttendance" class="card">
+     <h2>تسجيل الحضور</h2>
+     <div class="form-group"><label>اختر الأسبوع</label> <select id="weekSelect" onchange="loadAttendanceForWeek()"> <!-- Weeks will be populated here --> </select>
+     </div>
+     <div class="stats">
+      <div class="stat-box">
+       <p>الحاضرين</p>
+       <h3 id="presentCount">0</h3>
+      </div>
+      <div class="stat-box">
+       <p>الغائبين</p>
+       <h3 id="absentCount">0</h3>
+      </div>
+      <div class="stat-box">
+       <p>النسبة</p>
+       <h3 id="attendancePercentage">0%</h3>
+      </div>
+     </div>
+     <div class="table-container">
+      <table>
+       <thead>
+        <tr>
+         <th>اسم الطالب</th>
+         <th>حاضر</th>
+        </tr>
+       </thead>
+       <tbody id="attendanceCheckboxes"><!-- Attendance checkboxes will be populated here -->
+       </tbody>
+      </table>
+     </div><button class="btn btn-primary" onclick="saveAttendance()">💾 حفظ الحضور</button>
+    </div><!-- Grading Assignments Tab -->
+    <div id="teacherGrading" class="card hidden">
+     <h2>تقييم الواجبات</h2>
+     <div id="assignmentsToGrade">
+      <p>جاري تحميل الواجبات...</p>
+     </div>
+    </div><!-- Grades Input Tab -->
+    <div id="teacherGrades" class="card hidden">
+     <h2>إدخال الدرجات</h2>
+     <div class="table-container">
+      <table>
+       <thead>
+        <tr>
+         <th>الطالب</th>
+         <th>واجب 1</th>
+         <th>واجب 2</th>
+         <th>واجب 3</th>
+         <th>واجب 4</th>
+         <th>واجب 5</th>
+         <th>واجب 6</th>
+         <th>واجب 7</th>
+         <th>واجب 8</th>
+         <th>واجب 9</th>
+         <th>واجب 10</th>
+         <th>المجموع</th>
+         <th>المتوسط</th>
+        </tr>
+       </thead>
+       <tbody id="gradesInputTable"><!-- Grades input will be populated here -->
+       </tbody>
+      </table>
+     </div><button class="btn btn-primary" onclick="saveGrades()">💾 حفظ الدرجات</button>
+    </div><!-- Students Tab -->
+    <div id="teacherStudents" class="card hidden">
+     <h2>قائمة الطلاب</h2>
+     <div id="studentsList"><!-- Students list will be populated here -->
+     </div>
+    </div><!-- Follow-up Tab -->
+    <div id="teacherFollowup" class="card hidden">
+     <h2>الافتقاد الأسبوعي</h2>
+     <p style="color: #f5d76e; margin-bottom: 20px;">📌 يمكن تسجيل الافتقاد للأسبوع الحالي فقط</p>
+     <div class="table-container">
+      <table>
+       <thead>
+        <tr>
+         <th>اسم الطالب</th>
+         <th>تم الافتقاد</th>
+        </tr>
+       </thead>
+       <tbody id="followupCheckboxes"><!-- Follow-up checkboxes will be populated here -->
+       </tbody>
+      </table>
+     </div><button class="btn btn-primary" onclick="saveFollowup()">💾 حفظ الافتقاد</button>
+    </div>
+   </div><!-- Admin Dashboard -->
+   <div id="adminDashboard" class="hidden">
+    <div class="card">
+     <h2>لوحة التحكم</h2>
+     <div class="stats">
+      <div class="stat-box">
+       <div class="icon">
+        👨‍🎓
+       </div>
+       <p>إجمالي الدارسين</p>
+       <h3 id="totalStudents">0</h3>
+      </div>
+      <div class="stat-box">
+       <div class="icon">
+        👨‍🏫
+       </div>
+       <p>إجمالي الخدام</p>
+       <h3 id="totalTeachers">0</h3>
+      </div>
+      <div class="stat-box">
+       <div class="icon">
+        📊
+       </div>
+       <p>معدل الحضور</p>
+       <h3 id="overallAttendance">0%</h3>
+      </div>
+      <div class="stat-box">
+       <div class="icon">
+        ⭐
+       </div>
+       <p>متوسط الدرجات</p>
+       <h3 id="overallGrades">0%</h3>
+      </div>
+     </div>
+    </div>
+    <div class="nav-tabs"><button class="nav-tab active" onclick="switchAdminTab('students')">إدارة الدارسين</button> <button class="nav-tab" onclick="switchAdminTab('teachers')">إدارة الخدام</button> <button class="nav-tab" onclick="switchAdminTab('attendance')">الحضور والغياب</button> <button class="nav-tab" onclick="switchAdminTab('grades')">إدارة الدرجات</button> <button class="nav-tab" onclick="switchAdminTab('backup')">النسخ الاحتياطي</button> <button class="nav-tab" onclick="switchAdminTab('settings')">إعدادات الترم</button>
+    </div><!-- Students Management -->
+    <div id="adminStudents" class="card">
+     <h2>إدارة الدارسين</h2><button class="btn btn-primary" onclick="openAddStudentModal()">➕ إضافة دارس جديد</button>
+     <div class="table-container" style="margin-top: 20px;">
+      <table>
+       <thead>
+        <tr>
+         <th>الكود</th>
+         <th>الاسم</th>
+         <th>النوع</th>
+         <th>المرحلة</th>
+         <th>الفصل</th>
+         <th>الهاتف</th>
+         <th>الإجراءات</th>
+        </tr>
+       </thead>
+       <tbody id="studentsAdminTable"><!-- Students will be populated here -->
+       </tbody>
+      </table>
+     </div>
+    </div><!-- Teachers Management -->
+    <div id="adminTeachers" class="card hidden">
+     <h2>إدارة الخدام</h2><button class="btn btn-primary" onclick="openAddTeacherModal()">➕ إضافة خادم جديد</button>
+     <div class="table-container" style="margin-top: 20px;">
+      <table>
+       <thead>
+        <tr>
+         <th>الكود</th>
+         <th>الاسم</th>
+         <th>التخصص</th>
+         <th>الفصول</th>
+         <th>الهاتف</th>
+         <th>الإجراءات</th>
+        </tr>
+       </thead>
+       <tbody id="teachersAdminTable"><!-- Teachers will be populated here -->
+       </tbody>
+      </table>
+     </div>
+    </div><!-- Attendance Management -->
+    <div id="adminAttendance" class="card hidden">
+     <h2>الحضور والغياب</h2>
+     <div class="form-group"><label>اختر الفصل</label> <select id="adminClassSelect" onchange="loadAdminAttendance()"> <option value="all">جميع الفصول</option> <option value="A">فصل A</option> <option value="B">فصل B</option> <option value="C">فصل C</option> <option value="D">فصل D</option> <option value="E">فصل E</option> <option value="F">فصل F</option> </select>
+     </div>
+     <div id="adminAttendanceContent"><!-- Attendance content will be populated here -->
+     </div>
+    </div><!-- Grades Management -->
+    <div id="adminGradesTab" class="card hidden">
+     <h2>إدارة الدرجات</h2>
+     <div class="form-group"><label>اختر الفصل</label> <select id="adminGradesClassSelect" onchange="loadAdminGrades()"> <option value="A">فصل A</option> <option value="B">فصل B</option> <option value="C">فصل C</option> <option value="D">فصل D</option> <option value="E">فصل E</option> <option value="F">فصل F</option> </select>
+     </div>
+     <div id="adminGradesContent"><!-- Grades content will be populated here -->
+     </div>
+    </div><!-- Backup Tab -->
+    <div id="adminBackup" class="card hidden">
+     <h2>النسخ الاحتياطي</h2>
+     <div class="grid">
+      <div class="card">
+       <h3>📥 استيراد البيانات</h3><input type="file" id="importFile" accept=".json"> <button class="btn btn-primary" onclick="importData()" style="margin-top: 10px;">استيراد من JSON</button>
+      </div>
+      <div class="card">
+       <h3>📤 تصدير البيانات</h3><button class="btn btn-primary" onclick="exportJSON()">تصدير JSON</button> <button class="btn btn-secondary" onclick="exportExcel()" style="margin-top: 10px;">تصدير Excel</button>
+      </div>
+     </div>
+     <div class="card" style="margin-top: 20px;">
+      <h3>☁️ مزامنة مع Google Sheets</h3>
+      <p style="color: #f5d76e; margin: 15px 0;">🔧 سيتم تفعيل المزامنة مع Google Sheets قريباً</p><button class="btn btn-secondary" disabled>مزامنة البيانات</button>
+     </div>
+    </div><!-- Settings Tab -->
+    <div id="adminSettings" class="card hidden">
+     <h2>إعدادات الترم</h2>
+     <div class="card">
+      <h3>الترم الأول</h3>
+      <div class="form-group"><label>تاريخ البداية</label> <input type="date" id="term1Start" value="2024-09-05">
+      </div>
+      <div class="form-group"><label>تاريخ النهاية</label> <input type="date" id="term1End" value="2024-12-12">
+      </div>
+     </div>
+     <div class="card">
+      <h3>الترم الثاني</h3>
+      <div class="form-group"><label>تاريخ البداية</label> <input type="date" id="term2Start" value="2025-01-09">
+      </div>
+      <div class="form-group"><label>تاريخ النهاية</label> <input type="date" id="term2End" value="2025-04-17">
+      </div>
+     </div><button class="btn btn-primary" onclick="saveTermSettings()">💾 حفظ الإعدادات</button>
+    </div>
+   </div>
+  </div><!-- Assignment Modal -->
+  <div id="assignmentModal" class="modal">
+   <div class="modal-content">
+    <div class="modal-header"><span class="close-modal" onclick="closeAssignmentModal()">×</span>
+     <h2>إضافة واجب جديد</h2>
+    </div>
+    <div class="form-group"><label>نوع الواجب</label> <select id="assignmentType" onchange="changeAssignmentType()"> <option value="text">نص كتابي</option> <option value="image">صورة</option> <option value="audio">تسجيل صوتي</option> </select>
+    </div>
+    <div id="textAssignment">
+     <div class="form-group"><label>المحتوى</label> <textarea id="assignmentText" rows="6" placeholder="اكتب الواجب هنا..."></textarea>
+     </div>
+    </div>
+    <div id="imageAssignment" class="hidden">
+     <div class="form-group"><label>رفع الصورة</label> <input type="file" id="assignmentImage" accept="image/*">
+     </div>
+    </div>
+    <div id="audioAssignment" class="hidden">
+     <div class="audio-recorder">
+      <p id="recordingStatus">اضغط على زر التسجيل للبدء</p><button class="btn btn-primary" id="recordBtn" onclick="startRecording()">🎤 بدء التسجيل</button> <button class="btn btn-secondary" id="stopBtn" onclick="stopRecording()" disabled>⏹ إيقاف</button> <button class="btn btn-secondary" id="playBtn" onclick="playRecording()" disabled>▶ تشغيل</button>
+      <audio id="audioPlayback" style="display: none;"></audio>
+     </div>
+    </div>
+    <div style="margin-top: 20px;"><button class="btn btn-primary" onclick="submitAssignment()">📤 إرسال الواجب</button> <button class="btn btn-secondary" onclick="closeAssignmentModal()">إلغاء</button>
+    </div>
+   </div>
+  </div><!-- Add Student Modal -->
+  <div id="addStudentModal" class="modal">
+   <div class="modal-content">
+    <div class="modal-header"><span class="close-modal" onclick="closeAddStudentModal()">×</span>
+     <h2>إضافة دارس جديد</h2>
+    </div>
+    <div class="form-group"><label>الاسم الكامل</label> <input type="text" id="newStudentName" placeholder="أدخل الاسم الكامل">
+    </div>
+    <div class="form-group"><label>النوع</label> <select id="newStudentGender"> <option value="ذكر">ذكر</option> <option value="أنثى">أنثى</option> </select>
+    </div>
+    <div class="form-group"><label>تاريخ الميلاد</label> <input type="date" id="newStudentBirthdate">
+    </div>
+    <div class="form-group"><label>المرحلة الدراسية</label> <select id="newStudentStage"> <option value="ابتدائي">ابتدائي</option> <option value="إعدادي">إعدادي</option> <option value="ثانوي">ثانوي</option> <option value="جامعي">جامعي</option> <option value="خريج">خريج</option> </select>
+    </div>
+    <div class="form-group"><label>رقم الهاتف 1</label> <input type="tel" id="newStudentPhone1" placeholder="01xxxxxxxxx">
+    </div>
+    <div class="form-group"><label>رقم الهاتف 2</label> <input type="tel" id="newStudentPhone2" placeholder="01xxxxxxxxx">
+    </div>
+    <div class="form-group"><label>الفصل</label> <select id="newStudentClass"> <option value="A">فصل A</option> <option value="B">فصل B</option> <option value="C">فصل C</option> <option value="D">فصل D</option> <option value="E">فصل E</option> <option value="F">فصل F</option> </select>
+    </div>
+    <div class="form-group"><label>الرتبة الشماسية</label> <select id="newStudentRank"> <option value="لا يوجد">لا يوجد</option> <option value="ابسالتوس">ابسالتوس</option> <option value="أغنسطس">أغنسطس</option> <option value="أبيذياكون">أبيذياكون</option> <option value="ذياكون">ذياكون</option> </select>
+    </div>
+    <div class="form-group"><label>قيمة الاستمارة</label> <input type="number" id="newStudentFee" placeholder="0">
+    </div>
+    <div style="margin-top: 20px;"><button class="btn btn-primary" onclick="addNewStudent()">➕ إضافة الدارس</button> <button class="btn btn-secondary" onclick="closeAddStudentModal()">إلغاء</button>
+    </div>
+   </div>
+  </div><!-- Add Teacher Modal -->
+  <div id="addTeacherModal" class="modal">
+   <div class="modal-content">
+    <div class="modal-header"><span class="close-modal" onclick="closeAddTeacherModal()">×</span>
+     <h2>إضافة خادم جديد</h2>
+    </div>
+    <div class="form-group"><label>الاسم الكامل</label> <input type="text" id="newTeacherName" placeholder="أدخل الاسم الكامل">
+    </div>
+    <div class="form-group"><label>رقم الهاتف</label> <input type="tel" id="newTeacherPhone" placeholder="01xxxxxxxxx">
+    </div>
+    <div class="form-group"><label>التخصص</label> <input type="text" id="newTeacherSpecialty" placeholder="مثال: ألحان كنسية">
+    </div>
+    <div class="form-group"><label>الفصول المسؤولة</label>
+     <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 10px;"><label style="display: flex; align-items: center; gap: 5px;"> <input type="checkbox" value="A" class="teacher-class-checkbox"> فصل A </label> <label style="display: flex; align-items: center; gap: 5px;"> <input type="checkbox" value="B" class="teacher-class-checkbox"> فصل B </label> <label style="display: flex; align-items: center; gap: 5px;"> <input type="checkbox" value="C" class="teacher-class-checkbox"> فصل C </label> <label style="display: flex; align-items: center; gap: 5px;"> <input type="checkbox" value="D" class="teacher-class-checkbox"> فصل D </label> <label style="display: flex; align-items: center; gap: 5px;"> <input type="checkbox" value="E" class="teacher-class-checkbox"> فصل E </label> <label style="display: flex; align-items: center; gap: 5px;"> <input type="checkbox" value="F" class="teacher-class-checkbox"> فصل F </label>
+     </div>
+    </div>
+    <div class="form-group"><label>كلمة المرور</label> <input type="password" id="newTeacherPassword" placeholder="أدخل كلمة المرور">
+    </div>
+    <div style="margin-top: 20px;"><button class="btn btn-primary" onclick="addNewTeacher()">➕ إضافة الخادم</button> <button class="btn btn-secondary" onclick="closeAddTeacherModal()">إلغاء</button>
+    </div>
+   </div>
+  </div><!-- Toast Notification -->
+  <div id="toast" class="toast"></div>
+  <script>
+        // Initialize SDK when page loads
+        if (window.elementSdk) {
+            const defaultConfig = {
+                center_name: "مركز الحبيب للألحان والدراسات القبطية",
+                vision_text: "إنشاء جيل واعٍ بالتراث الكنسي والألحان القبطية الأصيلة، يحمل روح الآباء ويخدم الكنيسة بأمانة وتميز",
+                mission_text: "تقديم تعليم متميز في الألحان القبطية والدراسات الكنسية من خلال منهج روحي وعلمي متكامل، مع متابعة دقيقة لتقدم الدارسين"
+            };
+
+            async function onConfigChange(config) {
+                const centerName = config.center_name || defaultConfig.center_name;
+                const visionText = config.vision_text || defaultConfig.vision_text;
+                const missionText = config.mission_text || defaultConfig.mission_text;
+
+                const centerNameElement = document.getElementById('centerName');
+                const visionTextElement = document.getElementById('visionText');
+                const missionTextElement = document.getElementById('missionText');
+
+                if (centerNameElement) centerNameElement.textContent = centerName;
+                if (visionTextElement) visionTextElement.textContent = visionText;
+                if (missionTextElement) missionTextElement.textContent = missionText;
+            }
+
+            function mapToCapabilities(config) {
+                return {
+                    recolorables: [],
+                    borderables: [],
+                    fontEditable: undefined,
+                    fontSizeable: undefined
+                };
+            }
+
+            function mapToEditPanelValues(config) {
+                return new Map([
+                    ["center_name", config.center_name || defaultConfig.center_name],
+                    ["vision_text", config.vision_text || defaultConfig.vision_text],
+                    ["mission_text", config.mission_text || defaultConfig.mission_text]
+                ]);
+            }
+
+            window.elementSdk.init({
+                defaultConfig,
+                onConfigChange,
+                mapToCapabilities,
+                mapToEditPanelValues
+            });
+        }
+
+        // Global Variables
+        let currentUser = null;
+        let currentUserType = null;
+        let mediaRecorder = null;
+        let audioChunks = [];
+        let recordedAudio = null;
+
+        // Initialize LocalStorage structure
+        function initializeStorage() {
+            if (!localStorage.getItem('students')) {
+                localStorage.setItem('students', JSON.stringify([]));
+            }
+            if (!localStorage.getItem('teachers')) {
+                localStorage.setItem('teachers', JSON.stringify([]));
+            }
+            if (!localStorage.getItem('admin')) {
+                localStorage.setItem('admin', JSON.stringify({
+                    username: 'admin',
+                    password: 'admin123'
+                }));
+            }
+            if (!localStorage.getItem('assignments')) {
+                localStorage.setItem('assignments', JSON.stringify([]));
+            }
+            if (!localStorage.getItem('attendance')) {
+                localStorage.setItem('attendance', JSON.stringify({}));
+            }
+            if (!localStorage.getItem('grades')) {
+                localStorage.setItem('grades', JSON.stringify({}));
+            }
+            if (!localStorage.getItem('followup')) {
+                localStorage.setItem('followup', JSON.stringify({}));
+            }
+            if (!localStorage.getItem('termSettings')) {
+                localStorage.setItem('termSettings', JSON.stringify({
+                    term1Start: '2024-09-05',
+                    term1End: '2024-12-12',
+                    term2Start: '2025-01-09',
+                    term2End: '2025-04-17'
+                }));
+            }
+        }
+
+        // Generate unique code
+        function generateCode(prefix) {
+            const timestamp = Date.now().toString().slice(-6);
+            const random = Math.floor(Math.random() * 1000).toString().padStart(3, '0');
+            return `${prefix}${timestamp}${random}`;
+        }
+
+        // Show toast notification
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.classList.add('show');
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+
+        // Navigation functions
+        function showLogin() {
+            document.getElementById('homePage').classList.add('hidden');
+            document.getElementById('loginPage').classList.remove('hidden');
+        }
+
+        function backToHome() {
+            document.getElementById('loginPage').classList.add('hidden');
+            document.getElementById('homePage').classList.remove('hidden');
+        }
+
+        function switchLoginTab(type) {
+            document.querySelectorAll('.login-tab').forEach(tab => tab.classList.remove('active'));
+            document.getElementById('studentLogin').classList.add('hidden');
+            document.getElementById('teacherLogin').classList.add('hidden');
+            document.getElementById('adminLogin').classList.add('hidden');
+
+            if (type === 'student') {
+                document.querySelectorAll('.login-tab')[0].classList.add('active');
+                document.getElementById('studentLogin').classList.remove('hidden');
+            } else if (type === 'teacher') {
+                document.querySelectorAll('.login-tab')[1].classList.add('active');
+                document.getElementById('teacherLogin').classList.remove('hidden');
+            } else if (type === 'admin') {
+                document.querySelectorAll('.login-tab')[2].classList.add('active');
+                document.getElementById('adminLogin').classList.remove('hidden');
+            }
+        }
+
+        // Login functions
+        function loginStudent() {
+            const code = document.getElementById('studentCode').value.trim();
+            if (!code) {
+                showToast('الرجاء إدخال الكود');
+                return;
+            }
+
+            const students = JSON.parse(localStorage.getItem('students'));
+            const student = students.find(s => s.code === code);
+
+            if (student) {
+                currentUser = student;
+                currentUserType = 'student';
+                showStudentDashboard();
+            } else {
+                showToast('كود غير صحيح');
+            }
+        }
+
+        function loginTeacher() {
+            const code = document.getElementById('teacherCode').value.trim();
+            const password = document.getElementById('teacherPassword').value.trim();
+
+            if (!code || !password) {
+                showToast('الرجاء إدخال جميع البيانات');
+                return;
+            }
+
+            const teachers = JSON.parse(localStorage.getItem('teachers'));
+            const teacher = teachers.find(t => t.code === code && t.password === password);
+
+            if (teacher) {
+                currentUser = teacher;
+                currentUserType = 'teacher';
+                showTeacherDashboard();
+            } else {
+                showToast('بيانات غير صحيحة');
+            }
+        }
+
+        function loginAdmin() {
+            const username = document.getElementById('adminUsername').value.trim();
+            const password = document.getElementById('adminPassword').value.trim();
+
+            if (!username || !password) {
+                showToast('الرجاء إدخال جميع البيانات');
+                return;
+            }
+
+            const admin = JSON.parse(localStorage.getItem('admin'));
+
+            if (username === admin.username && password === admin.password) {
+                currentUserType = 'admin';
+                showAdminDashboard();
+            } else {
+                showToast('بيانات غير صحيحة');
+            }
+        }
+
+        function logout() {
+            currentUser = null;
+            currentUserType = null;
+            
+            document.getElementById('studentDashboard').classList.add('hidden');
+            document.getElementById('teacherDashboard').classList.add('hidden');
+            document.getElementById('adminDashboard').classList.add('hidden');
+            document.getElementById('logoutBtn').classList.add('hidden');
+            document.getElementById('homePage').classList.remove('hidden');
+            
+            document.getElementById('studentCode').value = '';
+            document.getElementById('teacherCode').value = '';
+            document.getElementById('teacherPassword').value = '';
+            document.getElementById('adminUsername').value = '';
+            document.getElementById('adminPassword').value = '';
+        }
+
+        // Student Dashboard
+        function showStudentDashboard() {
+            document.getElementById('loginPage').classList.add('hidden');
+            document.getElementById('studentDashboard').classList.remove('hidden');
+            document.getElementById('logoutBtn').classList.remove('hidden');
+            
+            document.getElementById('studentName').textContent = currentUser.name;
+            document.getElementById('studentCodeDisplay').textContent = currentUser.code;
+            document.getElementById('studentGender').textContent = currentUser.gender;
+            document.getElementById('studentStage').textContent = currentUser.stage;
+            document.getElementById('studentClass').textContent = `فصل ${currentUser.class}`;
+            document.getElementById('studentPhone').textContent = currentUser.phone1;
+            
+            loadStudentGrades();
+            loadStudentAttendance();
+            loadStudentAssignments();
+        }
+
+        function switchStudentTab(tab) {
+            document.querySelectorAll('#studentDashboard .nav-tab').forEach(t => t.classList.remove('active'));
+            document.getElementById('studentProfile').classList.add('hidden');
+            document.getElementById('studentGrades').classList.add('hidden');
+            document.getElementById('studentAttendance').classList.add('hidden');
+            document.getElementById('studentAssignments').classList.add('hidden');
+
+            if (tab === 'profile') {
+                document.querySelectorAll('#studentDashboard .nav-tab')[0].classList.add('active');
+                document.getElementById('studentProfile').classList.remove('hidden');
+            } else if (tab === 'grades') {
+                document.querySelectorAll('#studentDashboard .nav-tab')[1].classList.add('active');
+                document.getElementById('studentGrades').classList.remove('hidden');
+                loadStudentGrades();
+            } else if (tab === 'attendance') {
+                document.querySelectorAll('#studentDashboard .nav-tab')[2].classList.add('active');
+                document.getElementById('studentAttendance').classList.remove('hidden');
+                loadStudentAttendance();
+            } else if (tab === 'assignments') {
+                document.querySelectorAll('#studentDashboard .nav-tab')[3].classList.add('active');
+                document.getElementById('studentAssignments').classList.remove('hidden');
+                loadStudentAssignments();
+            }
+        }
+
+        function loadStudentGrades() {
+            const grades = JSON.parse(localStorage.getItem('grades'));
+            const studentGrades = grades[currentUser.code] || {};
+            
+            let totalGraded = 0;
+            let totalScore = 0;
+            let html = '';
+            
+            for (let i = 1; i <= 10; i++) {
+                const grade = studentGrades[`assignment${i}`];
+                let status = 'لم يتم التقييم';
+                let badgeClass = 'badge-pending';
+                let gradeDisplay = '-';
+                
+                if (grade !== undefined && grade !== null) {
+                    status = 'تم التقييم';
+                    badgeClass = 'badge-success';
+                    gradeDisplay = `${grade} / 10`;
+                    totalGraded++;
+                    totalScore += grade;
+                }
+                
+                html += `
+                    <tr>
+                        <td>واجب ${i}</td>
+                        <td><span class="badge ${badgeClass}">${status}</span></td>
+                        <td>${gradeDisplay}</td>
+                    </tr>
+                `;
+            }
+            
+            document.getElementById('gradesTable').innerHTML = html;
+            document.getElementById('gradedAssignments').textContent = totalGraded;
+            document.getElementById('remainingAssignments').textContent = 10 - totalGraded;
+            document.getElementById('totalGrade').textContent = `${totalScore} / 100`;
+            document.getElementById('averageGrade').textContent = totalGraded > 0 ? `${Math.round((totalScore / (totalGraded * 10)) * 100)}%` : '0%';
+        }
+
+        function loadStudentAttendance() {
+            const attendance = JSON.parse(localStorage.getItem('attendance'));
+            const studentAttendance = attendance[currentUser.code] || {};
+            
+            let present = 0;
+            let absent = 0;
+            let html = '';
+            
+            const termSettings = JSON.parse(localStorage.getItem('termSettings'));
+            const startDate = new Date(termSettings.term1Start);
+            
+            for (let i = 1; i <= 15; i++) {
+                const weekDate = new Date(startDate);
+                weekDate.setDate(weekDate.getDate() + (i - 1) * 7);
+                const dateStr = weekDate.toLocaleDateString('ar-EG');
+                
+                const status = studentAttendance[`week${i}`];
+                let statusDisplay = '⏳ لم يسجل';
+                let badgeClass = 'badge-pending';
+                
+                if (status === 'present') {
+                    statusDisplay = '✅ حاضر';
+                    badgeClass = 'badge-success';
+                    present++;
+                } else if (status === 'absent') {
+                    statusDisplay = '❌ غائب';
+                    badgeClass = 'badge-danger';
+                    absent++;
+                }
+                
+                html += `
+                    <tr>
+                        <td>الأسبوع ${i}</td>
+                        <td>${dateStr}</td>
+                        <td><span class="badge ${badgeClass}">${statusDisplay}</span></td>
+                    </tr>
+                `;
+            }
+            
+            document.getElementById('attendanceTable').innerHTML = html;
+            document.getElementById('presentDays').textContent = present;
+            document.getElementById('absentDays').textContent = absent;
+            
+            const recorded = present + absent;
+            const rate = recorded > 0 ? Math.round((present / recorded) * 100) : 0;
+            document.getElementById('attendanceRate').textContent = `${rate}%`;
+            
+            let alertHtml = '';
+            let alertClass = '';
+            if (rate >= 80) {
+                alertHtml = '<h3 style="color: #90ee90;">✅ نسبة حضور جيدة</h3>';
+                alertClass = 'badge-success';
+            } else if (rate >= 60) {
+                alertHtml = '<h3 style="color: #ffa500;">⚠ نسبة حضور متوسطة</h3>';
+                alertClass = 'badge-warning';
+            } else if (recorded > 0) {
+                alertHtml = '<h3 style="color: #ff6b6b;">⚠ نسبة حضور ضعيفة</h3>';
+                alertClass = 'badge-danger';
+            }
+            
+            document.getElementById('attendanceAlert').innerHTML = alertHtml;
+        }
+
+        function loadStudentAssignments() {
+            const assignments = JSON.parse(localStorage.getItem('assignments'));
+            const studentAssignments = assignments.filter(a => a.studentCode === currentUser.code);
+            
+            document.getElementById('submittedCount').textContent = studentAssignments.length;
+            
+            const today = new Date().getDay();
+            const canSubmit = today >= 5 || today <= 2;
+            document.getElementById('addAssignmentBtn').disabled = !canSubmit;
+            
+            if (!canSubmit) {
+                document.getElementById('assignmentSubmissionInfo').innerHTML = 
+                    '<p style="color: #ff6b6b; font-size: 1.1em;">⚠ لا يمكن إرسال الواجبات إلا من الجمعة إلى الثلاثاء</p>';
+            }
+            
+            let html = '';
+            studentAssignments.forEach((assignment, index) => {
+                const statusBadge = assignment.graded ? 
+                    '<span class="badge badge-success">تم التقييم</span>' : 
+                    '<span class="badge badge-pending">قيد الانتظار</span>';
+                
+                const gradeDisplay = assignment.graded ? `${assignment.grade} / 10` : '-';
+                
+                html += `
+                    <div class="card" style="margin-top: 15px;">
+                        <h3>واجب ${index + 1} - ${assignment.type === 'text' ? 'نص كتابي' : assignment.type === 'image' ? 'صورة' : 'تسجيل صوتي'}</h3>
+                        <p><strong>التاريخ:</strong> ${new Date(assignment.date).toLocaleDateString('ar-EG')}</p>
+                        <p><strong>الحالة:</strong> ${statusBadge}</p>
+                        <p><strong>الدرجة:</strong> ${gradeDisplay}</p>
+                        ${assignment.notes ? `<p><strong>ملاحظات:</strong> ${assignment.notes}</p>` : ''}
+                    </div>
+                `;
+            });
+            
+            document.getElementById('assignmentsList').innerHTML = html || '<p style="text-align: center; color: #f5d76e;">لم يتم إرسال أي واجبات بعد</p>';
+        }
+
+        // Assignment Modal
+        function openAssignmentModal() {
+            const today = new Date().getDay();
+            const canSubmit = today >= 5 || today <= 2;
+            
+            if (!canSubmit) {
+                showToast('لا يمكن إرسال الواجبات إلا من الجمعة إلى الثلاثاء');
+                return;
+            }
+            
+            const assignments = JSON.parse(localStorage.getItem('assignments'));
+            const studentAssignments = assignments.filter(a => a.studentCode === currentUser.code);
+            
+            if (studentAssignments.length >= 10) {
+                showToast('لقد وصلت للحد الأقصى من الواجبات (10 واجبات)');
+                return;
+            }
+            
+            document.getElementById('assignmentModal').classList.add('active');
+            document.getElementById('assignmentType').value = 'text';
+            changeAssignmentType();
+        }
+
+        function closeAssignmentModal() {
+            document.getElementById('assignmentModal').classList.remove('active');
+            document.getElementById('assignmentText').value = '';
+            document.getElementById('assignmentImage').value = '';
+            if (mediaRecorder && mediaRecorder.state === 'recording') {
+                mediaRecorder.stop();
+            }
+            audioChunks = [];
+            recordedAudio = null;
+        }
+
+        function changeAssignmentType() {
+            const type = document.getElementById('assignmentType').value;
+            
+            document.getElementById('textAssignment').classList.add('hidden');
+            document.getElementById('imageAssignment').classList.add('hidden');
+            document.getElementById('audioAssignment').classList.add('hidden');
+            
+            if (type === 'text') {
+                document.getElementById('textAssignment').classList.remove('hidden');
+            } else if (type === 'image') {
+                document.getElementById('imageAssignment').classList.remove('hidden');
+            } else if (type === 'audio') {
+                document.getElementById('audioAssignment').classList.remove('hidden');
+            }
+        }
+
+        async function startRecording() {
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                mediaRecorder = new MediaRecorder(stream);
+                audioChunks = [];
+                
+                mediaRecorder.ondataavailable = (event) => {
+                    audioChunks.push(event.data);
+                };
+                
+                mediaRecorder.onstop = () => {
+                    const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
+                    recordedAudio = audioBlob;
+                    const audioUrl = URL.createObjectURL(audioBlob);
+                    document.getElementById('audioPlayback').src = audioUrl;
+                    document.getElementById('playBtn').disabled = false;
+                    document.getElementById('recordingStatus').textContent = 'تم التسجيل بنجاح! يمكنك الاستماع أو الإرسال';
+                };
+                
+                mediaRecorder.start();
+                document.getElementById('recordBtn').disabled = true;
+                document.getElementById('stopBtn').disabled = false;
+                document.getElementById('recordingStatus').textContent = '🔴 جاري التسجيل...';
+            } catch (error) {
+                showToast('خطأ في الوصول إلى الميكروفون');
+            }
+        }
+
+        function stopRecording() {
+            if (mediaRecorder && mediaRecorder.state === 'recording') {
+                mediaRecorder.stop();
+                document.getElementById('recordBtn').disabled = false;
+                document.getElementById('stopBtn').disabled = true;
+            }
+        }
+
+        function playRecording() {
+            const audio = document.getElementById('audioPlayback');
+            audio.play();
+        }
+
+        function submitAssignment() {
+            const type = document.getElementById('assignmentType').value;
+            let content = null;
+            
+            if (type === 'text') {
+                content = document.getElementById('assignmentText').value.trim();
+                if (!content) {
+                    showToast('الرجاء إدخال محتوى الواجب');
+                    return;
+                }
+            } else if (type === 'image') {
+                const file = document.getElementById('assignmentImage').files[0];
+                if (!file) {
+                    showToast('الرجاء اختيار صورة');
+                    return;
+                }
+                content = 'image_uploaded';
+            } else if (type === 'audio') {
+                if (!recordedAudio) {
+                    showToast('الرجاء تسجيل الصوت أولاً');
+                    return;
+                }
+                content = 'audio_recorded';
+            }
+            
+            const assignments = JSON.parse(localStorage.getItem('assignments'));
+            const newAssignment = {
+                id: Date.now().toString(),
+                studentCode: currentUser.code,
+                type: type,
+                content: content,
+                date: new Date().toISOString(),
+                graded: false,
+                grade: null,
+                notes: ''
+            };
+            
+            assignments.push(newAssignment);
+            localStorage.setItem('assignments', JSON.stringify(assignments));
+            
+            showToast('تم إرسال الواجب بنجاح!');
+            closeAssignmentModal();
+            loadStudentAssignments();
+        }
+
+        // Teacher Dashboard
+        function showTeacherDashboard() {
+            document.getElementById('loginPage').classList.add('hidden');
+            document.getElementById('teacherDashboard').classList.remove('hidden');
+            document.getElementById('logoutBtn').classList.remove('hidden');
+            
+            document.getElementById('teacherName').textContent = currentUser.name;
+            document.getElementById('teacherCodeDisplay').textContent = currentUser.code;
+            document.getElementById('teacherPhone').textContent = currentUser.phone;
+            document.getElementById('teacherSpecialty').textContent = currentUser.specialty;
+            document.getElementById('teacherClassDisplay').textContent = `فصل ${currentUser.classes.join(', ')}`;
+            
+            const students = JSON.parse(localStorage.getItem('students'));
+            const classStudents = students.filter(s => currentUser.classes.includes(s.class));
+            document.getElementById('teacherStudentCount').textContent = classStudents.length;
+            
+            populateWeekSelect();
+            loadAttendanceForWeek();
+            loadTeacherStudents();
+            loadAssignmentsToGrade();
+            loadGradesInput();
+            loadFollowup();
+        }
+
+        function switchTeacherTab(tab) {
+            document.querySelectorAll('#teacherDashboard .nav-tabs .nav-tab').forEach(t => t.classList.remove('active'));
+            document.getElementById('teacherAttendance').classList.add('hidden');
+            document.getElementById('teacherGrading').classList.add('hidden');
+            document.getElementById('teacherGrades').classList.add('hidden');
+            document.getElementById('teacherStudents').classList.add('hidden');
+            document.getElementById('teacherFollowup').classList.add('hidden');
+
+            const tabs = document.querySelectorAll('#teacherDashboard .nav-tabs .nav-tab');
+            
+            if (tab === 'attendance') {
+                tabs[0].classList.add('active');
+                document.getElementById('teacherAttendance').classList.remove('hidden');
+                loadAttendanceForWeek();
+            } else if (tab === 'grading') {
+                tabs[1].classList.add('active');
+                document.getElementById('teacherGrading').classList.remove('hidden');
+                loadAssignmentsToGrade();
+            } else if (tab === 'grades') {
+                tabs[2].classList.add('active');
+                document.getElementById('teacherGrades').classList.remove('hidden');
+                loadGradesInput();
+            } else if (tab === 'students') {
+                tabs[3].classList.add('active');
+                document.getElementById('teacherStudents').classList.remove('hidden');
+                loadTeacherStudents();
+            } else if (tab === 'followup') {
+                tabs[4].classList.add('active');
+                document.getElementById('teacherFollowup').classList.remove('hidden');
+                loadFollowup();
+            }
+        }
+
+        function populateWeekSelect() {
+            const select = document.getElementById('weekSelect');
+            select.innerHTML = '';
+            
+            for (let i = 1; i <= 15; i++) {
+                const option = document.createElement('option');
+                option.value = i;
+                option.textContent = `الأسبوع ${i}`;
+                select.appendChild(option);
+            }
+        }
+
+        function loadAttendanceForWeek() {
+            const week = document.getElementById('weekSelect').value;
+            const students = JSON.parse(localStorage.getItem('students'));
+            const classStudents = students.filter(s => currentUser.classes.includes(s.class));
+            const attendance = JSON.parse(localStorage.getItem('attendance'));
+            
+            let html = '';
+            let presentCount = 0;
+            
+            classStudents.forEach(student => {
+                const studentAttendance = attendance[student.code] || {};
+                const isPresent = studentAttendance[`week${week}`] === 'present';
+                if (isPresent) presentCount++;
+                
+                html += `
+                    <tr>
+                        <td>${student.name}</td>
+                        <td>
+                            <input type="checkbox" 
+                                   data-student="${student.code}" 
+                                   ${isPresent ? 'checked' : ''}
+                                   onchange="updateAttendanceCount()">
+                        </td>
+                    </tr>
+                `;
+            });
+            
+            document.getElementById('attendanceCheckboxes').innerHTML = html;
+            updateAttendanceCount();
+        }
+
+        function updateAttendanceCount() {
+            const checkboxes = document.querySelectorAll('#attendanceCheckboxes input[type="checkbox"]');
+            let present = 0;
+            
+            checkboxes.forEach(cb => {
+                if (cb.checked) present++;
+            });
+            
+            const total = checkboxes.length;
+            const absent = total - present;
+            const percentage = total > 0 ? Math.round((present / total) * 100) : 0;
+            
+            document.getElementById('presentCount').textContent = present;
+            document.getElementById('absentCount').textContent = absent;
+            document.getElementById('attendancePercentage').textContent = `${percentage}%`;
+        }
+
+        function saveAttendance() {
+            const week = document.getElementById('weekSelect').value;
+            const checkboxes = document.querySelectorAll('#attendanceCheckboxes input[type="checkbox"]');
+            const attendance = JSON.parse(localStorage.getItem('attendance'));
+            
+            checkboxes.forEach(cb => {
+                const studentCode = cb.dataset.student;
+                if (!attendance[studentCode]) {
+                    attendance[studentCode] = {};
+                }
+                attendance[studentCode][`week${week}`] = cb.checked ? 'present' : 'absent';
+            });
+            
+            localStorage.setItem('attendance', JSON.stringify(attendance));
+            showToast('تم حفظ الحضور بنجاح!');
+        }
+
+        function loadAssignmentsToGrade() {
+            const assignments = JSON.parse(localStorage.getItem('assignments'));
+            const students = JSON.parse(localStorage.getItem('students'));
+            const classStudents = students.filter(s => currentUser.classes.includes(s.class));
+            const classStudentCodes = classStudents.map(s => s.code);
+            
+            const assignmentsToGrade = assignments.filter(a => 
+                classStudentCodes.includes(a.studentCode) && !a.graded
+            );
+            
+            if (assignmentsToGrade.length === 0) {
+                document.getElementById('assignmentsToGrade').innerHTML = 
+                    '<p style="text-align: center; color: #f5d76e;">لا توجد واجبات في انتظار التقييم</p>';
+                return;
+            }
+            
+            let html = '';
+            assignmentsToGrade.forEach(assignment => {
+                const student = students.find(s => s.code === assignment.studentCode);
+                const typeText = assignment.type === 'text' ? 'نص كتابي' : 
+                                 assignment.type === 'image' ? 'صورة' : 'تسجيل صوتي';
+                
+                html += `
+                    <div class="card" style="margin-top: 15px;">
+                        <h3>${student.name} - ${typeText}</h3>
+                        <p><strong>التاريخ:</strong> ${new Date(assignment.date).toLocaleDateString('ar-EG')}</p>
+                        ${assignment.type === 'text' ? `<p><strong>المحتوى:</strong> ${assignment.content}</p>` : ''}
+                        
+                        <div class="form-group">
+                            <label>الدرجة (من 0 إلى 10)</label>
+                            <input type="number" id="grade_${assignment.id}" min="0" max="10" value="0">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>ملاحظات</label>
+                            <textarea id="notes_${assignment.id}" rows="3" placeholder="اكتب ملاحظاتك هنا..."></textarea>
+                        </div>
+                        
+                        <button class="btn btn-primary" onclick="gradeAssignment('${assignment.id}')">
+                            ✅ تقييم الواجب
+                        </button>
+                    </div>
+                `;
+            });
+            
+            document.getElementById('assignmentsToGrade').innerHTML = html;
+        }
+
+        function gradeAssignment(assignmentId) {
+            const gradeInput = document.getElementById(`grade_${assignmentId}`);
+            const notesInput = document.getElementById(`notes_${assignmentId}`);
+            
+            const grade = parseInt(gradeInput.value);
+            if (grade < 0 || grade > 10) {
+                showToast('الدرجة يجب أن تكون بين 0 و 10');
+                return;
+            }
+            
+            const assignments = JSON.parse(localStorage.getItem('assignments'));
+            const assignment = assignments.find(a => a.id === assignmentId);
+            
+            if (assignment) {
+                assignment.graded = true;
+                assignment.grade = grade;
+                assignment.notes = notesInput.value.trim();
+                
+                localStorage.setItem('assignments', JSON.stringify(assignments));
+                
+                const grades = JSON.parse(localStorage.getItem('grades'));
+                if (!grades[assignment.studentCode]) {
+                    grades[assignment.studentCode] = {};
+                }
+                
+                const assignmentNumber = assignments.filter(a => 
+                    a.studentCode === assignment.studentCode && a.id <= assignmentId
+                ).length;
+                
+                grades[assignment.studentCode][`assignment${assignmentNumber}`] = grade;
+                localStorage.setItem('grades', JSON.stringify(grades));
+                
+                showToast('تم تقييم الواجب بنجاح!');
+                loadAssignmentsToGrade();
+            }
+        }
+
+        function loadGradesInput() {
+            const students = JSON.parse(localStorage.getItem('students'));
+            const classStudents = students.filter(s => currentUser.classes.includes(s.class));
+            const grades = JSON.parse(localStorage.getItem('grades'));
+            
+            let html = '';
+            classStudents.forEach(student => {
+                const studentGrades = grades[student.code] || {};
+                let total = 0;
+                let count = 0;
+                
+                html += `<tr><td>${student.name}</td>`;
+                
+                for (let i = 1; i <= 10; i++) {
+                    const grade = studentGrades[`assignment${i}`] || '';
+                    if (grade !== '') {
+                        total += parseInt(grade);
+                        count++;
+                    }
+                    html += `<td><input type="number" min="0" max="10" value="${grade}" 
+                                data-student="${student.code}" data-assignment="${i}" 
+                                style="width: 60px; padding: 5px;"></td>`;
+                }
+                
+                const average = count > 0 ? Math.round((total / (count * 10)) * 100) : 0;
+                html += `<td>${total}</td><td>${average}%</td></tr>`;
+            });
+            
+            document.getElementById('gradesInputTable').innerHTML = html;
+        }
+
+        function saveGrades() {
+            const inputs = document.querySelectorAll('#gradesInputTable input[type="number"]');
+            const grades = JSON.parse(localStorage.getItem('grades'));
+            
+            inputs.forEach(input => {
+                const studentCode = input.dataset.student;
+                const assignment = input.dataset.assignment;
+                const value = input.value.trim();
+                
+                if (!grades[studentCode]) {
+                    grades[studentCode] = {};
+                }
+                
+                if (value !== '') {
+                    grades[studentCode][`assignment${assignment}`] = parseInt(value);
+                }
+            });
+            
+            localStorage.setItem('grades', JSON.stringify(grades));
+            showToast('تم حفظ الدرجات بنجاح!');
+        }
+
+        function loadTeacherStudents() {
+            const students = JSON.parse(localStorage.getItem('students'));
+            const classStudents = students.filter(s => currentUser.classes.includes(s.class));
+            
+            let html = '';
+            classStudents.forEach(student => {
+                html += `
+                    <div class="card" style="margin-top: 15px;">
+                        <div class="grid">
+                            <div class="info-box">
+                                <label>الاسم</label>
+                                <p>${student.name}</p>
+                            </div>
+                            <div class="info-box">
+                                <label>الكود</label>
+                                <p>${student.code}</p>
+                            </div>
+                            <div class="info-box">
+                                <label>النوع</label>
+                                <p>${student.gender}</p>
+                            </div>
+                            <div class="info-box">
+                                <label>المرحلة</label>
+                                <p>${student.stage}</p>
+                            </div>
+                            <div class="info-box">
+                                <label>الفصل</label>
+                                <p>فصل ${student.class}</p>
+                            </div>
+                            <div class="info-box">
+                                <label>الهاتف</label>
+                                <p>${student.phone1}</p>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            document.getElementById('studentsList').innerHTML = html || 
+                '<p style="text-align: center; color: #f5d76e;">لا يوجد طلاب في الفصول المسؤولة</p>';
+        }
+
+        function loadFollowup() {
+            const students = JSON.parse(localStorage.getItem('students'));
+            const classStudents = students.filter(s => currentUser.classes.includes(s.class));
+            const followup = JSON.parse(localStorage.getItem('followup'));
+            
+            const currentWeek = getCurrentWeek();
+            
+            let html = '';
+            classStudents.forEach(student => {
+                const studentFollowup = followup[student.code] || {};
+                const isFollowedUp = studentFollowup[`week${currentWeek}`] === true;
+                
+                html += `
+                    <tr>
+                        <td>${student.name}</td>
+                        <td>
+                            <input type="checkbox" 
+                                   data-student="${student.code}" 
+                                   ${isFollowedUp ? 'checked' : ''}>
+                        </td>
+                    </tr>
+                `;
+            });
+            
+            document.getElementById('followupCheckboxes').innerHTML = html;
+        }
+
+        function getCurrentWeek() {
+            const termSettings = JSON.parse(localStorage.getItem('termSettings'));
+            const startDate = new Date(termSettings.term1Start);
+            const today = new Date();
+            const diffTime = Math.abs(today - startDate);
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+            return Math.min(Math.ceil(diffDays / 7), 15);
+        }
+
+        function saveFollowup() {
+            const currentWeek = getCurrentWeek();
+            const checkboxes = document.querySelectorAll('#followupCheckboxes input[type="checkbox"]');
+            const followup = JSON.parse(localStorage.getItem('followup'));
+            
+            checkboxes.forEach(cb => {
+                const studentCode = cb.dataset.student;
+                if (!followup[studentCode]) {
+                    followup[studentCode] = {};
+                }
+                followup[studentCode][`week${currentWeek}`] = cb.checked;
+            });
+            
+            localStorage.setItem('followup', JSON.stringify(followup));
+            showToast('تم حفظ الافتقاد بنجاح!');
+        }
+
+        // Admin Dashboard
+        function showAdminDashboard() {
+            document.getElementById('loginPage').classList.add('hidden');
+            document.getElementById('adminDashboard').classList.remove('hidden');
+            document.getElementById('logoutBtn').classList.remove('hidden');
+            
+            updateAdminStats();
+            loadAdminStudents();
+            loadAdminTeachers();
+        }
+
+        function switchAdminTab(tab) {
+            document.querySelectorAll('#adminDashboard .nav-tabs .nav-tab').forEach(t => t.classList.remove('active'));
+            document.getElementById('adminStudents').classList.add('hidden');
+            document.getElementById('adminTeachers').classList.add('hidden');
+            document.getElementById('adminAttendance').classList.add('hidden');
+            document.getElementById('adminGradesTab').classList.add('hidden');
+            document.getElementById('adminBackup').classList.add('hidden');
+            document.getElementById('adminSettings').classList.add('hidden');
+
+            const tabs = document.querySelectorAll('#adminDashboard .nav-tabs .nav-tab');
+            
+            if (tab === 'students') {
+                tabs[0].classList.add('active');
+                document.getElementById('adminStudents').classList.remove('hidden');
+                loadAdminStudents();
+            } else if (tab === 'teachers') {
+                tabs[1].classList.add('active');
+                document.getElementById('adminTeachers').classList.remove('hidden');
+                loadAdminTeachers();
+            } else if (tab === 'attendance') {
+                tabs[2].classList.add('active');
+                document.getElementById('adminAttendance').classList.remove('hidden');
+                loadAdminAttendance();
+            } else if (tab === 'grades') {
+                tabs[3].classList.add('active');
+                document.getElementById('adminGradesTab').classList.remove('hidden');
+                loadAdminGrades();
+            } else if (tab === 'backup') {
+                tabs[4].classList.add('active');
+                document.getElementById('adminBackup').classList.remove('hidden');
+            } else if (tab === 'settings') {
+                tabs[5].classList.add('active');
+                document.getElementById('adminSettings').classList.remove('hidden');
+                loadTermSettings();
+            }
+        }
+
+        function updateAdminStats() {
+            const students = JSON.parse(localStorage.getItem('students'));
+            const teachers = JSON.parse(localStorage.getItem('teachers'));
+            const attendance = JSON.parse(localStorage.getItem('attendance'));
+            const grades = JSON.parse(localStorage.getItem('grades'));
+            
+            document.getElementById('totalStudents').textContent = students.length;
+            document.getElementById('totalTeachers').textContent = teachers.length;
+            
+            let totalPresent = 0;
+            let totalRecorded = 0;
+            Object.values(attendance).forEach(studentAtt => {
+                Object.values(studentAtt).forEach(status => {
+                    if (status === 'present') totalPresent++;
+                    if (status !== undefined) totalRecorded++;
+                });
+            });
+            
+            const attendanceRate = totalRecorded > 0 ? Math.round((totalPresent / totalRecorded) * 100) : 0;
+            document.getElementById('overallAttendance').textContent = `${attendanceRate}%`;
+            
+            let totalGrades = 0;
+            let gradeCount = 0;
+            Object.values(grades).forEach(studentGrades => {
+                Object.values(studentGrades).forEach(grade => {
+                    totalGrades += grade;
+                    gradeCount++;
+                });
+            });
+            
+            const averageGrade = gradeCount > 0 ? Math.round((totalGrades / (gradeCount * 10)) * 100) : 0;
+            document.getElementById('overallGrades').textContent = `${averageGrade}%`;
+        }
+
+        function loadAdminStudents() {
+            const students = JSON.parse(localStorage.getItem('students'));
+            
+            let html = '';
+            students.forEach(student => {
+                html += `
+                    <tr>
+                        <td>${student.code}</td>
+                        <td>${student.name}</td>
+                        <td>${student.gender}</td>
+                        <td>${student.stage}</td>
+                        <td>فصل ${student.class}</td>
+                        <td>${student.phone1}</td>
+                        <td>
+                            <button class="btn btn-secondary" onclick="editStudent('${student.code}')" style="padding: 8px 15px; margin: 2px;">
+                                تعديل
+                            </button>
+                            <button class="btn btn-danger" onclick="confirmDeleteStudent('${student.code}')" style="padding: 8px 15px; margin: 2px;">
+                                حذف
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            });
+            
+            document.getElementById('studentsAdminTable').innerHTML = html || 
+                '<tr><td colspan="7" style="text-align: center;">لا يوجد دارسين</td></tr>';
+        }
+
+        function openAddStudentModal() {
+            document.getElementById('addStudentModal').classList.add('active');
+        }
+
+        function closeAddStudentModal() {
+            document.getElementById('addStudentModal').classList.remove('active');
+            document.getElementById('newStudentName').value = '';
+            document.getElementById('newStudentGender').value = 'ذكر';
+            document.getElementById('newStudentBirthdate').value = '';
+            document.getElementById('newStudentStage').value = 'ابتدائي';
+            document.getElementById('newStudentPhone1').value = '';
+            document.getElementById('newStudentPhone2').value = '';
+            document.getElementById('newStudentClass').value = 'A';
+            document.getElementById('newStudentRank').value = 'لا يوجد';
+            document.getElementById('newStudentFee').value = '';
+        }
+
+        function addNewStudent() {
+            const name = document.getElementById('newStudentName').value.trim();
+            const gender = document.getElementById('newStudentGender').value;
+            const birthdate = document.getElementById('newStudentBirthdate').value;
+            const stage = document.getElementById('newStudentStage').value;
+            const phone1 = document.getElementById('newStudentPhone1').value.trim();
+            const phone2 = document.getElementById('newStudentPhone2').value.trim();
+            const studentClass = document.getElementById('newStudentClass').value;
+            const rank = document.getElementById('newStudentRank').value;
+            const fee = document.getElementById('newStudentFee').value;
+            
+            if (!name || !birthdate || !phone1) {
+                showToast('الرجاء إدخال جميع البيانات المطلوبة');
+                return;
+            }
+            
+            const students = JSON.parse(localStorage.getItem('students'));
+            const newStudent = {
+                code: generateCode('STD'),
+                name: name,
+                gender: gender,
+                birthdate: birthdate,
+                stage: stage,
+                phone1: phone1,
+                phone2: phone2,
+                class: studentClass,
+                rank: rank,
+                fee: fee
+            };
+            
+            students.push(newStudent);
+            localStorage.setItem('students', JSON.stringify(students));
+            
+            showToast(`تم إضافة الدارس بنجاح! الكود: ${newStudent.code}`);
+            closeAddStudentModal();
+            loadAdminStudents();
+            updateAdminStats();
+        }
+
+        function confirmDeleteStudent(code) {
+            const studentToDelete = code;
+            const confirmCard = document.createElement('div');
+            confirmCard.className = 'card';
+            confirmCard.style.cssText = 'position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 1001; background: linear-gradient(135deg, #1a2332 0%, #2d1b3d 100%); border: 3px solid #d4af37; max-width: 400px;';
+            confirmCard.innerHTML = `
+                <h3 style="color: #d4af37; margin-bottom: 20px;">تأكيد الحذف</h3>
+                <p style="margin-bottom: 20px;">هل أنت متأكد من حذف هذا الدارس؟</p>
+                <button class="btn btn-danger" onclick="deleteStudent('${studentToDelete}'); document.body.removeChild(this.parentElement);">
+                    نعم، احذف
+                </button>
+                <button class="btn btn-secondary" onclick="document.body.removeChild(this.parentElement);">
+                    إلغاء
+                </button>
+            `;
+            document.body.appendChild(confirmCard);
+        }
+
+        function deleteStudent(code) {
+            const students = JSON.parse(localStorage.getItem('students'));
+            const filteredStudents = students.filter(s => s.code !== code);
+            localStorage.setItem('students', JSON.stringify(filteredStudents));
+            
+            showToast('تم حذف الدارس بنجاح');
+            loadAdminStudents();
+            updateAdminStats();
+        }
+
+        function editStudent(code) {
+            showToast('سيتم تفعيل خاصية التعديل قريباً');
+        }
+
+        function loadAdminTeachers() {
+            const teachers = JSON.parse(localStorage.getItem('teachers'));
+            
+            let html = '';
+            teachers.forEach(teacher => {
+                html += `
+                    <tr>
+                        <td>${teacher.code}</td>
+                        <td>${teacher.name}</td>
+                        <td>${teacher.specialty}</td>
+                        <td>فصل ${teacher.classes.join(', ')}</td>
+                        <td>${teacher.phone}</td>
+                        <td>
+                            <button class="btn btn-secondary" onclick="editTeacher('${teacher.code}')" style="padding: 8px 15px; margin: 2px;">
+                                تعديل
+                            </button>
+                            <button class="btn btn-danger" onclick="confirmDeleteTeacher('${teacher.code}')" style="padding: 8px 15px; margin: 2px;">
+                                حذف
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            });
+            
+            document.getElementById('teachersAdminTable').innerHTML = html || 
+                '<tr><td colspan="6" style="text-align: center;">لا يوجد خدام</td></tr>';
+        }
+
+        function openAddTeacherModal() {
+            document.getElementById('addTeacherModal').classList.add('active');
+        }
+
+        function closeAddTeacherModal() {
+            document.getElementById('addTeacherModal').classList.remove('active');
+            document.getElementById('newTeacherName').value = '';
+            document.getElementById('newTeacherPhone').value = '';
+            document.getElementById('newTeacherSpecialty').value = '';
+            document.getElementById('newTeacherPassword').value = '';
+            document.querySelectorAll('.teacher-class-checkbox').forEach(cb => cb.checked = false);
+        }
+
+        function addNewTeacher() {
+            const name = document.getElementById('newTeacherName').value.trim();
+            const phone = document.getElementById('newTeacherPhone').value.trim();
+            const specialty = document.getElementById('newTeacherSpecialty').value.trim();
+            const password = document.getElementById('newTeacherPassword').value.trim();
+            
+            const selectedClasses = [];
+            document.querySelectorAll('.teacher-class-checkbox:checked').forEach(cb => {
+                selectedClasses.push(cb.value);
+            });
+            
+            if (!name || !phone || !specialty || !password || selectedClasses.length === 0) {
+                showToast('الرجاء إدخال جميع البيانات المطلوبة');
+                return;
+            }
+            
+            const teachers = JSON.parse(localStorage.getItem('teachers'));
+            const newTeacher = {
+                code: generateCode('TCH'),
+                name: name,
+                phone: phone,
+                specialty: specialty,
+                classes: selectedClasses,
+                password: password
+            };
+            
+            teachers.push(newTeacher);
+            localStorage.setItem('teachers', JSON.stringify(teachers));
+            
+            showToast(`تم إضافة الخادم بنجاح! الكود: ${newTeacher.code}`);
+            closeAddTeacherModal();
+            loadAdminTeachers();
+            updateAdminStats();
+        }
+
+        function confirmDeleteTeacher(code) {
+            const teacherToDelete = code;
+            const confirmCard = document.createElement('div');
+            confirmCard.className = 'card';
+            confirmCard.style.cssText = 'position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 1001; background: linear-gradient(135deg, #1a2332 0%, #2d1b3d 100%); border: 3px solid #d4af37; max-width: 400px;';
+            confirmCard.innerHTML = `
+                <h3 style="color: #d4af37; margin-bottom: 20px;">تأكيد الحذف</h3>
+                <p style="margin-bottom: 20px;">هل أنت متأكد من حذف هذا الخادم؟</p>
+                <button class="btn btn-danger" onclick="deleteTeacher('${teacherToDelete}'); document.body.removeChild(this.parentElement);">
+                    نعم، احذف
+                </button>
+                <button class="btn btn-secondary" onclick="document.body.removeChild(this.parentElement);">
+                    إلغاء
+                </button>
+            `;
+            document.body.appendChild(confirmCard);
+        }
+
+        function deleteTeacher(code) {
+            const teachers = JSON.parse(localStorage.getItem('teachers'));
+            const filteredTeachers = teachers.filter(t => t.code !== code);
+            localStorage.setItem('teachers', JSON.stringify(filteredTeachers));
+            
+            showToast('تم حذف الخادم بنجاح');
+            loadAdminTeachers();
+            updateAdminStats();
+        }
+
+        function editTeacher(code) {
+            showToast('سيتم تفعيل خاصية التعديل قريباً');
+        }
+
+        function loadAdminAttendance() {
+            const selectedClass = document.getElementById('adminClassSelect').value;
+            const students = JSON.parse(localStorage.getItem('students'));
+            const attendance = JSON.parse(localStorage.getItem('attendance'));
+            
+            const filteredStudents = selectedClass === 'all' ? 
+                students : students.filter(s => s.class === selectedClass);
+            
+            let html = '<div class="table-container"><table><thead><tr><th>الطالب</th>';
+            for (let i = 1; i <= 15; i++) {
+                html += `<th>أسبوع ${i}</th>`;
+            }
+            html += '</tr></thead><tbody>';
+            
+            filteredStudents.forEach(student => {
+                html += `<tr><td>${student.name}</td>`;
+                const studentAttendance = attendance[student.code] || {};
+                
+                for (let i = 1; i <= 15; i++) {
+                    const status = studentAttendance[`week${i}`];
+                    const statusSymbol = status === 'present' ? '✅' : status === 'absent' ? '❌' : '⏳';
+                    html += `<td>${statusSymbol}</td>`;
+                }
+                
+                html += '</tr>';
+            });
+            
+            html += '</tbody></table></div>';
+            document.getElementById('adminAttendanceContent').innerHTML = html;
+        }
+
+        function loadAdminGrades() {
+            const selectedClass = document.getElementById('adminGradesClassSelect').value;
+            const students = JSON.parse(localStorage.getItem('students'));
+            const grades = JSON.parse(localStorage.getItem('grades'));
+            
+            const classStudents = students.filter(s => s.class === selectedClass);
+            
+            let html = '<div class="table-container"><table><thead><tr><th>الطالب</th>';
+            for (let i = 1; i <= 10; i++) {
+                html += `<th>واجب ${i}</th>`;
+            }
+            html += '<th>المجموع</th><th>المتوسط</th></tr></thead><tbody>';
+            
+            classStudents.forEach(student => {
+                const studentGrades = grades[student.code] || {};
+                let total = 0;
+                let count = 0;
+                
+                html += `<tr><td>${student.name}</td>`;
+                
+                for (let i = 1; i <= 10; i++) {
+                    const grade = studentGrades[`assignment${i}`];
+                    if (grade !== undefined) {
+                        total += grade;
+                        count++;
+                        html += `<td>${grade}</td>`;
+                    } else {
+                        html += '<td>-</td>';
+                    }
+                }
+                
+                const average = count > 0 ? Math.round((total / (count * 10)) * 100) : 0;
+                html += `<td>${total}</td><td>${average}%</td></tr>`;
+            });
+            
+            html += '</tbody></table></div>';
+            document.getElementById('adminGradesContent').innerHTML = html;
+        }
+
+        function loadTermSettings() {
+            const settings = JSON.parse(localStorage.getItem('termSettings'));
+            document.getElementById('term1Start').value = settings.term1Start;
+            document.getElementById('term1End').value = settings.term1End;
+            document.getElementById('term2Start').value = settings.term2Start;
+            document.getElementById('term2End').value = settings.term2End;
+        }
+
+        function saveTermSettings() {
+            const settings = {
+                term1Start: document.getElementById('term1Start').value,
+                term1End: document.getElementById('term1End').value,
+                term2Start: document.getElementById('term2Start').value,
+                term2End: document.getElementById('term2End').value
+            };
+            
+            localStorage.setItem('termSettings', JSON.stringify(settings));
+            showToast('تم حفظ إعدادات الترم بنجاح!');
+        }
+
+        function exportJSON() {
+            const data = {
+                students: JSON.parse(localStorage.getItem('students')),
+                teachers: JSON.parse(localStorage.getItem('teachers')),
+                assignments: JSON.parse(localStorage.getItem('assignments')),
+                attendance: JSON.parse(localStorage.getItem('attendance')),
+                grades: JSON.parse(localStorage.getItem('grades')),
+                followup: JSON.parse(localStorage.getItem('followup')),
+                termSettings: JSON.parse(localStorage.getItem('termSettings'))
+            };
+            
+            const dataStr = JSON.stringify(data, null, 2);
+            const dataBlob = new Blob([dataStr], {type: 'application/json'});
+            const url = URL.createObjectURL(dataBlob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `backup_${new Date().toISOString().split('T')[0]}.json`;
+            link.click();
+            
+            showToast('تم تصدير البيانات بنجاح!');
+        }
+
+        function exportExcel() {
+            showToast('سيتم تفعيل التصدير إلى Excel قريباً');
+        }
+
+        function importData() {
+            const fileInput = document.getElementById('importFile');
+            const file = fileInput.files[0];
+            
+            if (!file) {
+                showToast('الرجاء اختيار ملف للاستيراد');
+                return;
+            }
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const data = JSON.parse(e.target.result);
+                    
+                    if (data.students) localStorage.setItem('students', JSON.stringify(data.students));
+                    if (data.teachers) localStorage.setItem('teachers', JSON.stringify(data.teachers));
+                    if (data.assignments) localStorage.setItem('assignments', JSON.stringify(data.assignments));
+                    if (data.attendance) localStorage.setItem('attendance', JSON.stringify(data.attendance));
+                    if (data.grades) localStorage.setItem('grades', JSON.stringify(data.grades));
+                    if (data.followup) localStorage.setItem('followup', JSON.stringify(data.followup));
+                    if (data.termSettings) localStorage.setItem('termSettings', JSON.stringify(data.termSettings));
+                    
+                    showToast('تم استيراد البيانات بنجاح!');
+                    updateAdminStats();
+                    loadAdminStudents();
+                    loadAdminTeachers();
+                } catch (error) {
+                    showToast('خطأ في قراءة الملف');
+                }
+            };
+            reader.readAsText(file);
+        }
+
+        document.getElementById('logoutBtn').addEventListener('click', logout);
+
+        initializeStorage();
+    </script>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9a200c9061d8376c',t:'MTc2MzcyNjY2MS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
