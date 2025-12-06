@@ -1,0 +1,683 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>اللائحة الرسمية ونظام المركز — مركز الحبيب للألحان والدراسات القبطية</title>
+
+<!-- استخدمت خط Cairo من Google Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+
+<style>
+  :root{
+    --bg:#F5F8FB;
+    --card:#ffffff;
+    --accent:#0b2340;
+    --accent-2:#b8860b;
+    --muted:#586170;
+    --radius:12px;
+    --maxwidth:1100px;
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{
+    margin:0;
+    font-family:"Cairo",sans-serif;
+    background:linear-gradient(180deg,var(--bg),#eef3f8);
+    color:var(--accent);
+    -webkit-font-smoothing:antialiased;
+    padding:20px;
+    line-height:1.6;
+  }
+
+  /* Container */
+  .site {
+    max-width:var(--maxwidth);
+    margin:0 auto;
+    display:grid;
+    grid-template-columns: 1fr 320px;
+    gap:20px;
+    align-items:start;
+  }
+
+  header.appbar{
+    grid-column:1/-1;
+    display:flex;
+    gap:16px;
+    align-items:center;
+    background:var(--card);
+    padding:16px;
+    border-radius:12px;
+    box-shadow:0 8px 24px rgba(11,35,64,0.06);
+    border:1px solid rgba(11,35,64,0.04);
+  }
+  .logo {
+    width:72px;height:72px;border-radius:12px;
+    background:linear-gradient(180deg,var(--accent), #163a62);
+    display:grid;place-items:center;color:white;font-weight:800;font-size:20px;
+  }
+  header h1{margin:0;font-size:18px}
+  header p{margin:0;color:var(--muted);font-size:13px}
+
+  main.card{
+    background:var(--card);
+    border-radius:12px;
+    padding:20px;
+    box-shadow:0 8px 28px rgba(11,35,64,0.04);
+    border:1px solid rgba(11,35,64,0.035);
+  }
+
+  aside.card{
+    background:linear-gradient(180deg,#fff,#fbfdff);
+    border-radius:12px;padding:16px;border:1px solid rgba(11,35,64,0.03);
+    height:fit-content;
+    box-shadow:0 6px 20px rgba(11,35,64,0.04);
+  }
+
+  /* Table of contents */
+  .toc{display:flex;flex-direction:column;gap:10px}
+  .toc a{
+    display:inline-flex;align-items:center;gap:10px;padding:8px 10px;border-radius:8px;text-decoration:none;color:var(--accent);
+    border:1px dashed rgba(11,35,64,0.04);
+    font-weight:600;
+  }
+  .toc a:hover{background:rgba(11,35,64,0.03)}
+
+  /* Controls */
+  .controls{display:flex;flex-direction:column;gap:10px;margin-bottom:12px}
+  .btn{
+    display:inline-flex;gap:8px;align-items:center;justify-content:center;border:0;padding:10px 12px;border-radius:10px;cursor:pointer;font-weight:700;
+  }
+  .btn.primary{background:linear-gradient(90deg,var(--accent),#163a62);color:white;box-shadow:0 8px 20px rgba(11,35,64,0.08)}
+  .btn.ghost{background:transparent;border:1px solid rgba(11,35,64,0.06);color:var(--accent)}
+
+  /* Document sections */
+  .doc-section{margin-bottom:18px;border-radius:10px;overflow:hidden;border:1px solid rgba(11,35,64,0.03)}
+  .doc-head{
+    display:flex;align-items:center;justify-content:space-between;padding:12px 14px;background:linear-gradient(90deg, rgba(184,134,11,0.06), transparent);cursor:pointer;
+  }
+  .doc-head h2{margin:0;font-size:16px}
+  .doc-body{padding:14px 16px;background:#fff;display:none}
+  .doc-body.open{display:block}
+  .muted{color:var(--muted)}
+
+  /* typography for long content */
+  .content p, .content li {font-size:14px;color:#1b2430;margin:0 0 10px}
+  .content ul{padding-inline-start:20px;margin:0 0 10px}
+  .note{background:rgba(184,134,11,0.06);padding:10px;border-radius:8px;color:var(--accent-2);font-weight:600}
+
+  /* print improvements */
+  @media print{
+    body{background:white;padding:0}
+    .site{grid-template-columns:1fr}
+    aside, .btn, header p, .controls{display:none}
+    header.appbar{box-shadow:none;border:none;padding:10px}
+    main.card{box-shadow:none;border:none}
+    .doc-head{display:block}
+  }
+
+  /* responsiveness */
+  @media (max-width:980px){
+    .site{grid-template-columns:1fr;padding:10px}
+    aside{order:2}
+  }
+
+  /* small helpers */
+  .small{font-size:13px;color:var(--muted)}
+  .section-title{font-weight:700;color:var(--accent);margin-bottom:8px}
+  .search{display:flex;gap:8px;margin-bottom:12px}
+  .search input{flex:1;padding:10px;border-radius:8px;border:1px solid rgba(11,35,64,0.06)}
+</style>
+</head>
+<body>
+
+<div class="site">
+
+  <header class="appbar" role="banner">
+    <div style="display:flex;gap:12px;align-items:center">
+      <div class="logo" id="logoBox">الحب</div>
+      <div>
+        <h1>اللائحة الرسمية ونظام المركز</h1>
+        <p class="small">مركز الحبيب للألحان والدراسات القبطية — لائحة النظام الإداري والدراسي كاملة</p>
+      </div>
+    </div>
+    <div style="margin-inline-start:auto;display:flex;gap:8px;align-items:center">
+      <div class="small muted">نسخة قابلة للطباعة</div>
+      <button class="btn primary" id="printBtn" title="طباعة أو حفظ كـ PDF">🖨️ طباعة / حفظ كـ PDF</button>
+    </div>
+  </header>
+
+  <!-- Main document -->
+  <main class="card" role="main">
+
+    <!-- Search + quick actions -->
+    <div style="display:flex;flex-direction:column;gap:12px;margin-bottom:12px">
+      <div class="search">
+        <input type="search" id="searchBox" placeholder="ابحث داخل اللائحة (مثال: الحضور، الامتحانات، الترم الأول...)" />
+        <button class="btn ghost" id="clearSearch">مسح</button>
+      </div>
+
+      <div class="note">هذه الصفحة تحتوي على النص الكامل للائحة التي تم إرسالها. يمكنك طباعة الصفحة أو نسخ محتواها بسهولة.</div>
+    </div>
+
+    <!-- Full content sections (exact text as provided) -->
+
+    <!-- Section: النظام الاداري للمركز (intro) -->
+    <section class="doc-section" id="intro">
+      <div class="doc-head" role="button" aria-expanded="true">
+        <h2>النظام الاداري للمركز — الهدف والرؤية والرسالة والفئات</h2>
+        <div class="small">انقر للطّي / الفتح</div>
+      </div>
+      <div class="doc-body open content">
+        <p> <strong>الهدف :</strong></p>
+        <ul>
+          <li>هدفنا تعليم أولادنا وبناتنا من الصغر (من مرحلة الحضانة) كيف يستمتعون بصلوات الكنيسة .. بطقسها ولغتها القبطية وألحانها .</li>
+        </ul>
+
+        <p> <strong>الرؤية :</strong></p>
+        <ul>
+          <li>رؤيتنا إن الشعب كله يستمتع بليتورجية الكنيسة من قداس و تسبحة و صلوات مختلفة ... نصلي بالروح و الذهن أيضاً - تحت شعار: <em>أفهم ... صلّي ... استمتع</em></li>
+          <li>بعد تخرج ثالث دفعة الكنيسة كلها تستمتع بالليتورجية</li>
+        </ul>
+
+        <p> <strong>رسالتنا:</strong></p>
+        <ul>
+          <li>تكامل المدرسة مع كل الاجتماعات</li>
+        </ul>
+
+        <p> <strong>الفئة المستهدفة :</strong></p>
+        <ul>
+          <li>مرحلة الحضانة وحتي ثانوي وشباب وخريجين وأولياء الأمور لنعطي الفرصة لأكبر عدد من الناس للاستمتاع بكنيستنا الجميلة .</li>
+        </ul>
+
+        <p> <strong>السنة الدراسية :</strong></p>
+        <ul>
+          <li>مواعيد الدراسة والأمتحانات لا تتعارض مع مواعيد (الأمتحانات المدرسية) بحيث يتمكن الدارسين من الأستمتاع بالدراسة ويستمتع بليتورجية الكنيسة من قداس و تسبحة والصلوات مختلفة</li>
+        </ul>
+
+        <p> <strong>مسئولي الخدمة :</strong></p>
+        <ul>
+          <li>فريق الإعداد الدراسي .</li>
+          <ul>
+            <li>فريق الألحان والتسبحة .</li>
+            <li>فريق اللغة القبطية .</li>
+            <li>فريق الطقس + عقيدة + أجبية .</li>
+          </ul>
+          <li>فريق النظام .</li>
+          <ul>
+            <li>فريق الأتصالات والمتابعة .</li>
+            <li>فريق الكنترول والمتابعة .</li>
+          </ul>
+          <li>فريق المساعدة .</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- Section: نظام الدراسة بالمركز -->
+    <section class="doc-section" id="study-system">
+      <div class="doc-head" role="button" aria-expanded="false">
+        <h2>نظام الدراسة بالمركز — المستويات (تمهيدي - ابتدائي - كبار)</h2>
+        <div class="small">انقر للطّي / الفتح</div>
+      </div>
+      <div class="doc-body content">
+
+        <h3 class="section-title">أولًا: مرحلة التمهيدي (مرحلة الأطفال 5–6 سنوات)</h3>
+        <p><strong>1- التعريف</strong><br>
+        مرحلة تعليمية تأسيسية مخصّصة للأطفال من سن 5 إلى 6 سنوات.</p>
+        <p><strong>2- المدة</strong><br>
+        • سنتان دراسيتان.<br>
+        o المستوى التمهيدي – السنة الأولى.<br>
+        o المستوى التمهيدي – السنة الثانية.</p>
+        <p><strong>3- شروط الانتقال</strong><br>
+        • الطفل ذو 5 سنوات يكمل السنتين كاملتين.<br>
+        • الطفل ذو 6 سنوات يلتحق بالسنة الثانية مباشرة، وبعدها ينتقل إلى المستوى الأول ابتدائي (سنة أولى ابتدائي في منهج المركز)</p>
+
+        <hr>
+
+        <h3 class="section-title">ثانيًا: المرحلة الابتدائية (6 سنوات دراسية)</h3>
+        <p>تنقسم مرحلة الابتدائي إلى مستويين، كل مستوى مدته ثلاث سنوات.</p>
+
+        <p><strong>1. المستوى الأول ابتدائي (3 سنوات)</strong><br>
+        • يقبل الدارسين من الصف: (أولى – ثانية – ثالثة – رابعة – خامسة – سادسة ابتدائي) حسب سنه ومرحلته.<br>
+        • يدرس الدارس 3 سنوات متتالية داخل هذا المستوى.</p>
+
+        <p><strong>2. المستوى الثاني ابتدائي (3 سنوات)</strong><br>
+        • مخصص للدارسين في صفوف: (رابعة – خامسة – سادسة ابتدائي).<br>
+        • يدرس الدارس 3 سنوات متتالية داخل المستوى.</p>
+
+        <p><strong>3. قواعد الانتقال من الابتدائي</strong><br>
+        • إذا أكمل الدارس ست سنوات كاملة (المستوى الأول + المستوى الثاني) ينتقل مباشرة إلى المستوى الثاني إعدادي.<br>
+        • إذا درس الدارس ثلاث سنوات فقط (مستوى واحد) ينتقل إلى المستوى الأول إعدادي كدارس جديد.</p>
+
+        <hr>
+
+        <h3 class="section-title">ثالثًا: مرحلة الكبار (إعدادي – ثانوي – شباب – خريجين)</h3>
+        <p>تشمل الدارسين الأكبر سنًا ويُدرّسون مناهج أعمق وأكثر توسعًا.</p>
+
+        <p><strong>1. المستويات</strong><br>
+        مرحلة الكبار عبارة عن مستويين:<br>
+        • المستوى الأول كبار (3 سنوات)<br>
+        • المستوى الثاني كبار (3 سنوات)</p>
+
+        <p><strong>2. الفئات العمرية والدراسية المشمولة</strong><br>
+        • المرحلة الإعدادية (أولى – ثانية – ثالثة)<br>
+        • المرحلة الثانوية (أولى – ثانية – ثالثة).<br>
+        • شباب وخريجين (سن الجامعة فما فوق).</p>
+
+        <p><strong>3. قواعد الانتقال</strong><br>
+        • الانتقال بين مستويات الكبار يعتمد على عدد سنوات الدراسة داخل المستوى وليس على الصف الدراسي.<br>
+        • مثال:<br>
+        o دارس في أولى إعدادي يبدأ في المستوى الأول كبار.<br>
+        o بعد 3 سنوات ينتقل إلى المستوى الثاني كبار.<br>
+        o دارس في ثانية أو ثالثة ثانوي يُكمل سنواته المتبقية داخل المستوى الأول حسب عدد السنوات المتاحة.</p>
+
+        <hr>
+
+        <h3 class="section-title">رابعًا: القواعد العامة</h3>
+        <ol>
+          <li>كل مستوى في المركز يمثل مرحلة تعليمية كاملة بمدة محددة (سنتين أو ثلاث سنوات).</li>
+          <li>الانتقال بين المستويات يتم وفق قواعد واضحة تعتمد على زمن الدراسة داخل المستوى.</li>
+          <li>مناهج الكبار أعمق من مناهج الابتدائي، وتتناسب مع العمر والمستوى الروحي.</li>
+          <li>لا يجوز تخطي مستوى كامل دون دراسة سنواته المحددة.</li>
+          <li>يُسمح بنقل الدارس بين مستويات الابتدائي وفق العمر والصف الدراسي.</li>
+          <li>في مرحلة الكبار يتم الانتقال بمرونة أكبر، شرط إتمام السنوات الثلاث في كل مستوى.</li>
+        </ol>
+
+        <hr>
+
+        <h3 class="section-title">خامسًا: الهيكل الهرمي للمستويات</h3>
+        <ul>
+          <li>التمهيدي: سنتان.</li>
+          <li>الابتدائي: 6 سنوات (مستوى أول + مستوى ثانٍ)</li>
+          <li>الكبار: 6 سنوات (مستوى أول + مستوى ثانٍ)</li>
+        </ul>
+        <p>إجمالي سنوات الدراسة المتاحة في المركز: <strong>14 سنة</strong>.</p>
+
+        <hr>
+
+        <h3 class="section-title">سادسًا: أهداف نظام المستويات</h3>
+        <ul>
+          <li>توفير مسار تعليمي منظم لجميع الأعمار.</li>
+          <li>ضمان التدرّج في تعليم الألحان والقبطي والطقس.</li>
+          <li>إعداد كوادر قادرة على خدمة الكنيسة والمرتلين.</li>
+          <li>تحقيق تكامل بين الجانب الروحي والعلمي والطقسي.</li>
+        </ul>
+
+      </div>
+    </section>
+
+    <!-- Section: الهيكل النظام الاداري (detailed tables) -->
+    <section class="doc-section" id="administration">
+      <div class="doc-head" role="button" aria-expanded="false">
+        <h2>هيكل النظام الإداري للمركز — جانب دراسي و إداري وتفاصيل</h2>
+        <div class="small">انقر للطّي / الفتح</div>
+      </div>
+      <div class="doc-body content">
+
+        <p><strong>هيكل النظام الاداري بالمركز</strong></p>
+
+        <p><strong>الجانب الدراسي</strong></p>
+        <ol>
+          <li><strong>الهدف الأساسي :</strong><br>
+            • التعليم : مواد الدراسة (الطقوس الكنسية - اللغة القبطية - الألحان والتسبحة - المحفوظات والأجبية)</li>
+
+          <li><strong>الأفتقاد :</strong><br>
+            • الأتصالات والمتابعة • أفتفاد الدارسين ومتابعتهم</li>
+
+          <li><strong>المناهج :</strong><br>
+            • تجهيز المناهج • التحضير • المراجعات • تحضير اسئلة الامتحانات (التحريري – الشفوي)</li>
+
+          <li><strong>متابعة اليوم الدراسي :</strong><br>
+            • المستوي التعليمي • تصحيح المفاهيم • تصحيح الواجبات • رصد الدرجات (الشفوي – الواجبات - الامتحانات) • متابعة الفصول (الغياب – الواجبات – السلوك والشفوي)</li>
+
+          <li><strong>مشاركة الخدمة فى نشاطات الكنيسة</strong><br>
+            • قداس شهري (القراءات – خدمة المذبح – اغابي) • المشاركة في نهضة العذراء • الحضور والتنظيم أثناء الرسامات الكنسية • المشاركة في مناسبات وأعياد الكنيسة • الإشراف على حفلات المناسبات الداخلية والخارجية</li>
+
+          <li><strong>الأمتحانات :</strong><br>
+            • الترم الأول (ميد ترم - الترم الأول - تخلفات الترم الأول) • الترم الثاني (ميد ترم - الترم الثاني - تخلفات الترم الثاني) • أسئلة (شفوي – تصحيح – نتيجة )</li>
+
+          <li><strong>الأنشطة الترفيهية :</strong><br>
+            • رحلات • حفلات • كرنفال • مؤتمر</li>
+        </ol>
+
+        <hr>
+
+        <p><strong>الجانب الإداري</strong></p>
+        <ol>
+          <li><strong>الافتقاد:</strong><br>
+            • التواصل مع الدارسين وأولياء الأمور • افتقاد الغائبين والمتابعة المستمرة</li>
+
+          <li><strong>متابعة اليوم الدراسي:</strong><br>
+            • التأكد من انتظام اليوم • توزيع المهام • المتابعة الإدارية للفصول • تسجيل الحضور والغياب (خدام - دارسين) • المتابعة مع الخدام</li>
+
+          <li><strong>المشاركة الكنسية:</strong><br>
+            • قداس شهري • نهضة العذراء • الحضور أثناء الرسامات • المشاركة في المناسبات • الإشراف على الحفلات</li>
+
+          <li><strong>التنبيهات والإعلانات:</strong><br>
+            • إرسال تنبيهات أسبوعية للدارسين • تنسيق المواعيد • طباعة وإرسال الرسائل الإدارية والتنظيمية</li>
+
+          <li><strong>تنظيم السنوي:</strong><br>
+            • 2 يوم روحي • 2 رحلة ترفيهية • 1 مؤتمر سنوي</li>
+        </ol>
+
+      </div>
+    </section>
+
+    <!-- Section: السنة الدراسية والخريطة الزمنية -->
+    <section class="doc-section" id="calendar">
+      <div class="doc-head" role="button" aria-expanded="false">
+        <h2>السنة الدراسية والخريطة الزمنية 2025 - 2026</h2>
+        <div class="small">انقر للطّي / الفتح</div>
+      </div>
+      <div class="doc-body content">
+        <p> <strong>السنة الدراسية :</strong></p>
+        <ul>
+          <li>يقبل المركز الدارسين من كل المراحل ( مرحلة الحضانة حتى أولياء الأمور ) & (أولاد وبنات)</li>
+          <li>تبدأ الدراسة سنوياً مع بدء السنة الدراسية على ترمان (كل ترم كورس منفصل)</li>
+          <li>الترم الأول : (الجمعة الأولى من شهر سبتمبر) ، الترم الثاني : (الجمعة الأخيرة من شهر يناير)</li>
+          <li>كل كورس (ترم) مكون من 15 أسبوع متتالي (حسب الخريطة الزمنية التالية لعام 2024 - 2025)</li>
+        </ul>
+
+        <h4 class="section-title">الخريطة الزمنية للسنة الدراسية 2025 - 2026</h4>
+        <div class="small muted" style="margin-bottom:8px">الترم الأول: 05 سبتمبر, 2025 — 05 ديسمبر, 2025 (امتحان 12 ديسمبر, 2025)  •  الترم الثاني: 30 يناير, 2026 — 01 مايو, 2026 (امتحان 08 مايو, 2026)</div>
+
+        <table style="width:100%;border-collapse:collapse">
+          <thead>
+            <tr>
+              <th style="text-align:right;padding:8px;border-bottom:1px solid rgba(11,35,64,0.06)">الترم</th>
+              <th style="text-align:right;padding:8px;border-bottom:1px solid rgba(11,35,64,0.06)">الأسبوع</th>
+              <th style="text-align:right;padding:8px;border-bottom:1px solid rgba(11,35,64,0.06)">التاريخ (الترم الأول)</th>
+              <th style="text-align:right;padding:8px;border-bottom:1px solid rgba(11,35,64,0.06)">التاريخ (الترم الثاني)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- condensed for readability; include key rows -->
+            <tr><td style="padding:8px;border-bottom:1px solid #f0f3f7">الأول</td><td style="padding:8px;border-bottom:1px solid #f0f3f7">1</td><td style="padding:8px;border-bottom:1px solid #f0f3f7">٥ سبتمبر ٢٠٢٥</td><td style="padding:8px;border-bottom:1px solid #f0f3f7">٣٠ يناير ٢٠٢٦</td></tr>
+            <tr><td style="padding:8px;border-bottom:1px solid #f0f3f7"></td><td style="padding:8px;border-bottom:1px solid #f0f3f7">2</td><td style="padding:8px;border-bottom:1px solid #f0f3f7">١٢ سبتمبر ٢٠٢٥</td><td style="padding:8px;border-bottom:1px solid #f0f3f7">٦ فبراير ٢٠٢٦</td></tr>
+            <tr><td style="padding:8px;border-bottom:1px solid #f0f3f7"></td><td style="padding:8px;border-bottom:1px solid #f0f3f7">3</td><td style="padding:8px;border-bottom:1px solid #f0f3f7">١٩ سبتمبر ٢٠٢٥</td><td style="padding:8px;border-bottom:1px solid #f0f3f7">١٣ فبراير ٢٠٢٦</td></tr>
+            <tr><td style="padding:8px;border-bottom:1px solid #f0f3f7">... (تابع الأسابيع حتى 15)</td><td style="padding:8px;border-bottom:1px solid #f0f3f7"></td><td style="padding:8px;border-bottom:1px solid #f0f3f7">...</td><td style="padding:8px;border-bottom:1px solid #f0f3f7">...</td></tr>
+            <tr><td style="padding:8px">النهائي</td><td style="padding:8px">15</td><td style="padding:8px">12 ديسمبر 2025</td><td style="padding:8px">08 مايو 2026</td></tr>
+          </tbody>
+        </table>
+
+        <p class="small muted">يمكن تعديل هذه الخريطة الزمنية سنويًا عند وضع الخطة الجديدة.</p>
+      </div>
+    </section>
+
+    <!-- Section: الحصص - المواد - حضور - واجبات - الامتحانات -->
+    <section class="doc-section" id="lessons">
+      <div class="doc-head" role="button" aria-expanded="false">
+        <h2>الحصص، المواد، الحضور، الواجبات، ونظام الامتحانات</h2>
+        <div class="small">انقر للطّي / الفتح</div>
+      </div>
+      <div class="doc-body content">
+
+        <h4 class="section-title">الحصص - المواد</h4>
+        <p> مواد الدراسة : تتكون الدراسة من اربعة مواد (الألحان والتسبحة – اللغة القبطية – الطقوس الكنسية – المحفوظات \"الأجبية\")</p>
+
+        <p> موعد الدراسة والفصول (المستوى الأول):</p>
+        <ul>
+          <li>المرحلة / الفصل / كود الفصل / ميعاد الدراسة</li>
+          <li>حضانة — الملاك غبريال المبشر — A</li>
+          <li>أولي – ثانية — السيدة العذراء مريم — B — الجمعة من كل أسبوع</li>
+          <li>ثالثة – رابعة — الشهيد مارمينا العجايبى — C — الساعة 5:00 م الى 7:00 م</li>
+          <li>خامسة – سادسة — البابا كيرلس السادس — D — حسب الخريطة الزمنية الموضحة</li>
+          <li>إعدادي – ثانوي — الشهيد ابو سيفين — E — فصل التميز</li>
+          <li>شباب - خريجين — الشهيد غللينكوس الأسقف — F — القديس ماريوحنا الحبيب</li>
+        </ul>
+
+        <p> تقسيم اليوم الدراسي وتوزيع المواد : (الكورس 15 اسبوع × 2 ساعة = 30 ساعة فى الكورس)</p>
+        <ul>
+          <li>40 دقيقة — ألحان</li>
+          <li>15 دقيقة — بريك</li>
+          <li>25 دقيقة — قبطي</li>
+          <li>25 دقيقة — طقس او عقيدة او اجبية</li>
+          <li>15 دقيقة — تنبيهات وتدريبات لنظام الامتحان والمشاركة</li>
+          <li>2 ساعة — اجبية (مجموع ترم)</li>
+          <li>1 ساعة — عقيدة (بالتنسيق مع الآباء)</li>
+        </ul>
+
+        <h4 class="section-title">الغياب</h4>
+        <p>- يقوم الدارس بتسجيل الغياب أثناء الدخول بواسطة تسليم الكارنيه للخادم المسؤول عن الغياب في كل فصل ولا يسمح بتسجيل الحضور بعد الوقت المحدد لرفع الغياب.</p>
+        <p>- يجب ألا تتجاوز نسبة الغياب 3 مرات غير متتالية خلال الترم مع تقديم عذر مقبول.</p>
+
+        <h4 class="section-title">الواجبات</h4>
+        <p>- يقدم الدارس 12 واجبًا خلال كل ترم ويُقدّم الواجب قبل الدخول فقط.</p>
+        <p>- يستلم الدارس كتاب ومحتوى (C.D) يحتوي على الألحان ولقطات القداس التعليمي إن توفرت.</p>
+
+        <h4 class="section-title">نظام الامتحانات وتوزيع الدرجات</h4>
+        <p> يجتاز الدارس امتحانًا بعد كل ترم في المواد الخمس بنجاح.</p>
+
+        <p><strong>توزيع درجات مادة الطقوس – اللغة القبطية (تحريري - شفوي)</strong></p>
+        <ul>
+          <li>الامتحان تحريري: 30</li>
+          <li>واجب: 20</li>
+          <li>شفوي: 20</li>
+          <li>حضور: 15</li>
+          <li>سلوك: 15</li>
+          <li>مجموع = 100</li>
+        </ul>
+
+        <p><strong>توزيع درجات مادة الألحان – المحفوظات \"الأجبية\" (شفوي)</strong></p>
+        <ul>
+          <li>الأمتحان: 30</li>
+          <li>سلوك: 15</li>
+          <li>حضور: 15</li>
+          <li>سلامة وإجادة الحفظ: 15</li>
+          <li>سلامة نطق الكلامات: 15</li>
+          <li>المعلومة الطقسية عن اللحن: 15</li>
+          <li>الحفظ الغيبي: 10</li>
+          <li>مجموع = 100</li>
+        </ul>
+
+        <p> في حالة الرسوب يعيد الترم خلال السنة التالية ولا يستلم الدارس شهادة عن هذه السنة ويستلمها السنة التالية.</p>
+        <p> تبدأ الامتحانات من الساعة الخامسة وحتى الساعة التاسعة مساءً ولا يسمح بالتأخير في الامتحان التحريري.</p>
+        <p> تعلن النتيجة بعد أسبوع واحد من الامتحان ويرسل لينك النتيجة على جروب الواتس اب.</p>
+
+      </div>
+    </section>
+
+    <!-- Section: تعليمات عامة ومالية -->
+    <section class="doc-section" id="general">
+      <div class="doc-head" role="button" aria-expanded="false">
+        <h2>تعليمات عامة — الرسوم والالتزامات</h2>
+        <div class="small">انقر للطّي / الفتح</div>
+      </div>
+      <div class="doc-body content">
+
+        <h4 class="section-title">تعليمات عامة</h4>
+        <ul>
+          <li>الرسوم السنوية: رسوم الاشتراك بالمركز: <strong>50 ج سنويًا</strong> (مع تقديم الدعم حسب الحاجة).</li>
+          <li>يوجد تخفيض خاص للأخوات بنسبة تتراوح من 10% إلى 20% من إجمالي رسوم الاشتراك.</li>
+          <li>يشترك الدارس عن طريق سحب استمارة الاشتراك من سكرتارية الكنيسة وملئها وتسليمها لخدام المركز.</li>
+          <li>يجب إرفاق عدد 2 صورة شخصية لكل دارس ويُدون خلفها اسمه وتسلم مع استمارة الالتحاق مع إرسال الصورة عن طريق الواتس اب لخادم الفصل المسؤول عن جمع البيانات.</li>
+          <li>يجب الحضور مبكرًا لإكمال إجراءات الدخول حيث أن ساعات الدراسة مقسمة تقسيمًا دقيقًا على مواد الدراسة ولا يسمح بالدخول بعد رفع الغياب نهائيًا.</li>
+          <li>يستلم كل دارس كارنيه مدون عليه رقم (Code) وتكون كل تعاملات الدارس مع المركز من خلال الكارنيه (تسجيل الغياب – حجز الكتاب – حجز الـ C.D – تسليم الواجبات – دخول الامتحان – استلام النتيجة).</li>
+          <li>يجب إحضار كشكول وقلم خاص بمركز الحبيب للإلحان لتدوين وكتابة ملاحظات أثناء الشرح.</li>
+          <li>يقوم فريق الاتصالات والمتابعة بعمل جروب خاص بكل فصل على الواتس اب لسهولة التواصل وإرسال تنبيهات وأوراق شرح اليوم.</li>
+          <li>في نهاية كل سنة دراسية أو (مستوى دراسي) حفل تخرج – واستلام الشهادات – وتكريم الأوائل.</li>
+        </ul>
+
+        <p class="small muted">مع تحيات مركز الحبيب للإلحان والدراسات القبطية</p>
+
+      </div>
+    </section>
+
+    <!-- Footer note -->
+    <div style="margin-top:10px;font-size:13px;color:var(--muted)">
+      هذه اللائحة قابلة للتعديل الرسمي عند اعتماد الإدارة — يمكن تنزيلها أو طباعتها مباشرة من هذه الصفحة.
+    </div>
+
+  </main>
+
+  <!-- Sidebar -->
+  <aside class="card" role="complementary" aria-label="أدوات الصفحة">
+
+    <div class="controls">
+      <div class="search small">
+        <input id="tocSearch" placeholder="ابحث في الفهرس..." />
+        <button class="btn ghost" id="expandAll">فتح الكل</button>
+      </div>
+
+      <div class="toc" id="tocList">
+        <a href="#intro">النظام الاداري — الهدف والرؤية</a>
+        <a href="#study-system">نظام الدراسة — المستويات</a>
+        <a href="#administration">الهيكل الإداري</a>
+        <a href="#calendar">السنة الدراسية والخريطة</a>
+        <a href="#lessons">الحصص والامتحانات</a>
+        <a href="#general">تعليمات عامة</a>
+      </div>
+
+      <div style="display:flex;gap:8px;margin-top:8px">
+        <button class="btn primary" id="copyBtn" title="نسخ النص الكامل">📋 نسخ اللائحة</button>
+        <button class="btn ghost" id="downloadBtn" title="تحميل كملف HTML">⬇️ تحميل HTML</button>
+      </div>
+
+      <div style="margin-top:12px;font-size:13px;color:var(--muted)">
+        <strong>ملاحظة:</strong><br>لإضافة شعار صورة بدل المربع اعلى اليسار قم بإرسال ملف الشعار وسأدرجه لك.
+      </div>
+    </div>
+
+  </aside>
+
+</div>
+
+<script>
+  // Basic interactive behaviors: toggle sections, TOC scroll, search, copy, print, download
+  (function(){
+    // Toggle sections
+    document.querySelectorAll('.doc-section .doc-head').forEach(h=>{
+      h.addEventListener('click', ()=>{
+        const body = h.nextElementSibling;
+        if(!body) return;
+        const open = body.classList.toggle('open');
+        h.setAttribute('aria-expanded', open?'true':'false');
+      });
+    });
+
+    // Expand all button in sidebar
+    document.getElementById('expandAll').addEventListener('click', ()=>{
+      const bodies = document.querySelectorAll('.doc-body');
+      const anyClosed = Array.from(bodies).some(b => !b.classList.contains('open'));
+      bodies.forEach(b => {
+        if(anyClosed) b.classList.add('open'); else b.classList.remove('open');
+      });
+      // update heads aria-expanded
+      document.querySelectorAll('.doc-section .doc-head').forEach(h=>{
+        const body = h.nextElementSibling;
+        h.setAttribute('aria-expanded', body.classList.contains('open'));
+      });
+    });
+
+    // Print button
+    document.getElementById('printBtn').addEventListener('click', ()=>{
+      // open all sections for full print
+      document.querySelectorAll('.doc-body').forEach(b => b.classList.add('open'));
+      setTimeout(()=> window.print(), 220);
+    });
+
+    // Search inside document (simple)
+    const searchBox = document.getElementById('searchBox');
+    const clearSearch = document.getElementById('clearSearch');
+    searchBox.addEventListener('input', (e)=>{
+      const q = e.target.value.trim();
+      filterContent(q);
+    });
+    clearSearch.addEventListener('click', ()=>{
+      searchBox.value='';
+      filterContent('');
+    });
+
+    function filterContent(q){
+      const sections = document.querySelectorAll('.doc-section');
+      if(!q){
+        sections.forEach(s => s.style.display = '');
+        return;
+      }
+      const pattern = q.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
+      const re = new RegExp(pattern, 'i');
+      sections.forEach(s=>{
+        const text = s.innerText || s.textContent;
+        if(re.test(text)) s.style.display=''; else s.style.display='none';
+      });
+    }
+
+    // TOC search (filters TOC links)
+    document.getElementById('tocSearch').addEventListener('input', (e)=>{
+      const q = e.target.value.trim();
+      const items = document.querySelectorAll('#tocList a');
+      items.forEach(a=>{
+        if(!q) { a.style.display='flex'; return; }
+        if(a.textContent.includes(q)) a.style.display='flex'; else a.style.display='none';
+      });
+    });
+
+    // Smooth scroll for TOC links
+    document.querySelectorAll('#tocList a').forEach(a=>{
+      a.addEventListener('click', (ev)=>{
+        ev.preventDefault();
+        const id = a.getAttribute('href').slice(1);
+        const target = document.getElementById(id);
+        if(target){
+          target.scrollIntoView({behavior:'smooth',block:'start'});
+          // open the section
+          const body = target.querySelector('.doc-body');
+          if(body) body.classList.add('open');
+        }
+      });
+    });
+
+    // Copy full text
+    document.getElementById('copyBtn').addEventListener('click', async ()=>{
+      const text = gatherPlainText();
+      try{
+        await navigator.clipboard.writeText(text);
+        const btn = document.getElementById('copyBtn');
+        const old = btn.textContent;
+        btn.textContent = '✅ تم النسخ';
+        setTimeout(()=> btn.textContent = old, 2000);
+      }catch(e){
+        alert('فشل النسخ تلقائياً — يمكنك تحديد النص ونسخه يدوياً.');
+      }
+    });
+
+    function gatherPlainText(){
+      const title = document.querySelector('header.appbar h1').textContent.trim();
+      let out = title + '\\n\\n';
+      document.querySelectorAll('main .doc-section').forEach(sec=>{
+        const h = sec.querySelector('.doc-head h2').textContent.trim();
+        const txt = sec.querySelector('.doc-body').innerText.trim();
+        out += h + '\\n' + txt + '\\n\\n';
+      });
+      return out;
+    }
+
+    // Download HTML (current page) as file
+    document.getElementById('downloadBtn').addEventListener('click', ()=>{
+      const html = '<!doctype html>\\n' + document.documentElement.outerHTML;
+      const blob = new Blob([html], {type:'text/html;charset=utf-8'});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'اللائحة_نظام_المركز.html';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    });
+
+    // Allow logo image replacement via drag & drop (optional enhancement)
+    const logoBox = document.getElementById('logoBox');
+    logoBox.addEventListener('click', ()=> alert('لإضافة شعار بديل أرسل لي ملف الشعار (PNG/JPG) وسوف أدرجه لك في النسخة النهائية.)');
+
+    // Accessibility: enable Enter on doc-head
+    document.querySelectorAll('.doc-head').forEach(h=>{
+      h.setAttribute('tabindex','0');
+      h.addEventListener('keypress', (e)=> { if(e.key === 'Enter' || e.key === ' ') h.click(); });
+    });
+
+  })();
+</script>
+
+</body>
+</html>
